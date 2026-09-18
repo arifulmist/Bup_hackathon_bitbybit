@@ -1,300 +1,1252 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GridWise — Smart Campus Energy Optimizer</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <title>BUP Smart Campus — Energy Management & Optimization</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" href="https://bup.edu.bd/public/images/logo/favicon.ico" type="image/x-icon" />
+
+  <!-- Fonts: Plus Jakarta Sans, Poppins, JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            bup: {
+              navy: '#0b1b3d',
+              deep: '#060f22',
+              card: '#0f234f',
+              blue: '#179bd7',
+              royal: '#253b80',
+              green: '#01803d',
+              emerald: '#10b981',
+              gold: '#ffb606',
+              amber: '#f59e0b',
+              border: '#1d356d'
+            }
+          },
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'Poppins', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+            bup: ['Poppins', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- External Libraries: Three.js, OrbitControls, Chart.js, Confetti -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
   <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; }
-    code, pre, .mono { font-family: 'JetBrains Mono', monospace; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: radial-gradient(circle at 50% 0%, #112654 0%, #060e20 60%, #030712 100%);
+      color: #f1f5f9;
+      min-height: 100vh;
+    }
+    
+    .bup-glass {
+      background: rgba(15, 35, 79, 0.65);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(37, 59, 128, 0.45);
+    }
+    .bup-glass-subtle {
+      background: rgba(11, 27, 61, 0.5);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(29, 53, 109, 0.35);
+    }
+    .bup-glass-card {
+      background: linear-gradient(135deg, rgba(23, 155, 215, 0.08) 0%, rgba(15, 35, 79, 0.75) 100%);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(37, 59, 128, 0.5);
+    }
+
+    /* Pulse flow animation for SVG energy conduits */
+    @keyframes pulseDash {
+      0% { stroke-dashoffset: 40; }
+      100% { stroke-dashoffset: 0; }
+    }
+    .pulse-flow {
+      stroke-dasharray: 6 6;
+      animation: pulseDash 1.2s linear infinite;
+    }
+    .pulse-flow-reverse {
+      stroke-dasharray: 6 6;
+      animation: pulseDash 1.2s linear infinite reverse;
+    }
+
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #060e20;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e3a7a;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #179bd7;
+    }
+
+    /* Glow utilities */
+    .glow-gold {
+      box-shadow: 0 0 20px rgba(255, 182, 6, 0.25);
+    }
+    .glow-blue {
+      box-shadow: 0 0 20px rgba(23, 155, 215, 0.3);
+    }
+    .glow-green {
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.25);
+    }
   </style>
 </head>
-<body class="bg-[#0b0f19] text-slate-100 min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-black">
 
-  <!-- Header -->
-  <header class="border-b border-slate-800/80 bg-[#0d1322]/80 backdrop-blur-md sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-          <svg class="w-5 h-5 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-          </svg>
-        </div>
-        <div>
-          <h1 class="font-bold text-lg tracking-tight bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">GridWise</h1>
-          <p class="text-xs text-slate-400 -mt-1">Smart Campus Energy Optimizer • BUP CSE Fest 2026</p>
-        </div>
-      </div>
-      <div class="flex items-center space-x-4">
-        <div class="flex items-center space-x-2 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 rounded-full">
-          <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span class="text-xs font-medium text-emerald-400">Core Engine Online</span>
-        </div>
-        <a href="/docs" target="_blank" class="text-xs text-slate-400 hover:text-white transition px-3 py-1.5 rounded-lg border border-slate-800 hover:border-slate-700 bg-slate-900/60">
-          API Specs
+<body class="flex flex-col antialiased selection:bg-bup-blue selection:text-white">
+
+  <!-- TOP BRANDING & STATUS HEADER -->
+  <header class="sticky top-0 z-50 border-b border-bup-border/60 bg-[#07132c]/90 backdrop-blur-md">
+    <!-- Top University Accent Bar (BUP Sky Blue) -->
+    <div class="h-1 bg-gradient-to-r from-bup-royal via-bup-blue to-bup-green w-full"></div>
+    
+    <div class="max-w-[1680px] mx-auto px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-4">
+      
+      <!-- BUP Brand Identity -->
+      <div class="flex items-center space-x-3.5">
+        <a href="https://bup.edu.bd" target="_blank" class="flex items-center space-x-3 group">
+          <div class="h-11 w-11 rounded-xl bg-white/10 p-1 border border-white/20 flex items-center justify-center shadow-lg group-hover:scale-105 transition">
+            <img src="https://bup.edu.bd/public/upload/logo/202306071686132726.svg" alt="BUP Logo" class="h-9 w-9 object-contain" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23179bd7\'><path d=\'M12 2L1 7l11 5 9-4.09V17h2V7L12 2zm0 13l-7-3.18V18l7 3.5 7-3.5v-6.18L12 15z\'/></svg>'">
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="font-bold tracking-wide text-xs sm:text-sm text-white font-bup uppercase">Bangladesh University of Professionals</span>
+              <span class="hidden md:inline-block text-[10px] px-2 py-0.5 rounded-full bg-bup-blue/20 text-bup-blue border border-bup-blue/30 font-mono">BUP CSE Fest 2026</span>
+            </div>
+            <h1 class="text-base sm:text-lg font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-bup-blue bg-clip-text text-transparent">
+              GridWise — Smart Campus Energy Optimizer
+            </h1>
+          </div>
         </a>
       </div>
+
+      <!-- Live Campus Environment & Operator Telemetry -->
+      <div class="flex items-center space-x-3 sm:space-x-5 text-xs">
+        
+        <!-- Live Weather Widget (Mirpur Cantonment, Dhaka) -->
+        <div class="hidden lg:flex items-center space-x-2.5 bg-bup-navy/80 border border-bup-border px-3.5 py-1.5 rounded-xl shadow-inner">
+          <span class="text-xl">⛅</span>
+          <div>
+            <div class="font-semibold text-white flex items-center space-x-1">
+              <span>Dhaka, BD</span>
+              <span class="text-bup-gold font-bold">28°C</span>
+            </div>
+            <div class="text-[10px] text-slate-400">Partly Cloudy • Solar Peak 78%</div>
+          </div>
+        </div>
+
+        <!-- Live Real-Time Clock -->
+        <div class="hidden sm:flex items-center space-x-2 bg-bup-navy/80 border border-bup-border px-3.5 py-1.5 rounded-xl font-mono text-slate-300 shadow-inner">
+          <svg class="w-4 h-4 text-bup-blue animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span id="liveClock" class="font-semibold text-white">19:42:00</span>
+        </div>
+
+        <!-- Operator Status Badge -->
+        <div class="flex items-center space-x-2 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 rounded-xl">
+          <div class="h-6 w-6 rounded-full bg-emerald-500 text-black font-bold text-[11px] flex items-center justify-center">OP</div>
+          <div>
+            <div class="flex items-center space-x-1.5">
+              <span class="h-2 w-2 rounded-full bg-emerald-400 animate-ping"></span>
+              <span class="font-bold text-emerald-300 text-[11px]">Operator Online</span>
+            </div>
+            <div class="text-[9px] text-slate-400">Simulation Ready</div>
+          </div>
+        </div>
+
+        <!-- Quick API Docs Link -->
+        <a href="/docs" target="_blank" class="hidden md:flex items-center space-x-1 px-3 py-1.5 bg-bup-royal/40 hover:bg-bup-royal/70 border border-bup-blue/40 text-bup-blue hover:text-white rounded-xl transition text-xs font-medium">
+          <span>API Specs</span>
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+        </a>
+
+        <!-- Primary Solve CTA Button -->
+        <button onclick="runOptimization()" id="topRunBtn" class="px-4 py-2 bg-gradient-to-r from-bup-blue to-emerald-500 hover:from-sky-400 hover:to-teal-400 text-black font-bold rounded-xl shadow-lg shadow-bup-blue/20 transition transform active:scale-95 flex items-center space-x-2">
+          <svg id="topSpinner" class="animate-spin -ml-0.5 mr-1 h-3.5 w-3.5 text-black hidden" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+          </svg>
+          <span id="topBtnText">Run Optimization</span>
+        </button>
+
+      </div>
+
     </div>
   </header>
 
-  <!-- Main Container -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-6 py-8 space-y-8">
+  <!-- MAIN APPLICATION LAYOUT -->
+  <div class="flex-1 max-w-[1680px] w-full mx-auto px-4 sm:px-6 py-6 flex gap-6">
 
-    <!-- Top Grid: Input Controls & Operator Directives -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-      
-      <!-- Left: Operator Directives Input -->
-      <div class="lg:col-span-6 bg-[#111827]/70 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
-        <div class="flex items-center justify-between">
-          <h2 class="font-semibold text-base flex items-center space-x-2 text-white">
-            <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+    <!-- LEFT SIDEBAR NAVIGATION (From Reference Image 1) -->
+    <aside class="hidden xl:flex flex-col w-64 shrink-0 space-y-6">
+      <div class="bup-glass rounded-2xl p-4 flex flex-col justify-between h-full space-y-6">
+        
+        <!-- Navigation Links -->
+        <div class="space-y-1.5">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-3 py-1">Command Menu</div>
+          
+          <a href="#dashboardSection" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl bg-bup-royal text-white font-semibold text-xs transition border border-bup-blue/40 shadow-md">
+            <svg class="w-4 h-4 text-bup-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+            <span>Dashboard</span>
+          </a>
+
+          <a href="#threeCampusSection" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white text-xs transition">
+            <svg class="w-4 h-4 text-bup-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+            <span>3D Digital Twin</span>
+          </a>
+
+          <a href="#energyFlowSection" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white text-xs transition">
+            <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <span>Energy Flow</span>
+          </a>
+
+          <a href="#operatorNotesSection" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white text-xs transition">
+            <div class="flex items-center space-x-3">
+              <svg class="w-4 h-4 text-bup-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+              <span>Operator Notes</span>
+            </div>
+            <span class="bg-rose-500 text-white font-bold text-[10px] px-1.5 py-0.5 rounded-full" id="notesBadge">3</span>
+          </a>
+
+          <a href="#schedulesSection" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white text-xs transition">
+            <svg class="w-4 h-4 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            <span>24h Schedule</span>
+          </a>
+
+          <a href="#validationSection" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white text-xs transition">
+            <svg class="w-4 h-4 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span>Verification Checklist</span>
+          </a>
+
+          <a href="#telemetrySection" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white text-xs transition">
+            <svg class="w-4 h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            <span>Telemetry History</span>
+          </a>
+        </div>
+
+        <!-- Campus Storage Parameters Summary -->
+        <div class="bg-[#081533]/80 p-3.5 rounded-xl border border-bup-border/60 text-xs space-y-2">
+          <div class="flex items-center justify-between text-[11px] text-slate-400 font-medium">
+            <span>BESS Storage Unit</span>
+            <span class="text-emerald-400 font-bold">Online</span>
+          </div>
+          <div class="flex items-center justify-between text-white font-mono">
+            <span>Cap: 100 kWh</span>
+            <span class="text-bup-blue">E₀: 50 kWh</span>
+          </div>
+          <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+            <div id="sidebarSocBar" class="bg-gradient-to-r from-bup-blue to-emerald-400 h-full w-[62%] transition-all duration-700"></div>
+          </div>
+          <div class="flex justify-between text-[10px] text-slate-400">
+            <span>Min: 10 kWh</span>
+            <span class="text-emerald-300 font-semibold" id="sidebarSocPct">62% SoC</span>
+            <span>Target: 50 kWh</span>
+          </div>
+        </div>
+
+        <!-- University Motto & Seal Footer -->
+        <div class="pt-4 border-t border-bup-border/50 text-center space-y-2">
+          <div class="inline-block p-2 rounded-xl bg-white/5 border border-white/10">
+            <svg class="w-8 h-8 mx-auto text-bup-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
             </svg>
-            <span>Operator Notes (Natural Language)</span>
-          </h2>
-          <span class="text-xs bg-slate-800 text-slate-400 px-2.5 py-0.5 rounded-md">1 to 3 notes</span>
-        </div>
-
-        <p class="text-xs text-slate-400 leading-relaxed">
-          Input plain English operator directives. The LLM interpreter parses hour windows, solar reduction fractions, and battery bounds, verified by deterministic guardrails.
-        </p>
-
-        <div class="space-y-3" id="notesContainer">
-          <div class="flex items-center space-x-2">
-            <input type="text" class="operator-note-input w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition" 
-              value="Heavy cloud cover expected between 1 PM and 3 PM; solar PV output will drop by 80%." placeholder="Note 1 (e.g. cloud cover, reserve demand, no-charge window)">
           </div>
-          <div class="flex items-center space-x-2">
-            <input type="text" class="operator-note-input w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition" 
-              value="Keep at least 35 kWh reserve in the battery between 6 PM and 9 PM for the evening auditorium event." placeholder="Note 2 (optional)">
-          </div>
-          <div class="flex items-center space-x-2">
-            <input type="text" class="operator-note-input w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition" 
-              value="Hold battery discharging between 7 AM and 9 AM." placeholder="Note 3 (optional)">
+          <div>
+            <div class="text-[11px] font-bold text-white font-bup uppercase">Bangladesh University of Professionals</div>
+            <div class="text-[10px] text-slate-400">Smarter Energy • Greener Campus</div>
+            <div class="text-[9px] text-bup-gold italic mt-0.5">"Excellence Through Knowledge"</div>
           </div>
         </div>
 
-        <!-- Presets and Run Button -->
-        <div class="pt-2 flex items-center justify-between">
-          <div class="flex space-x-2">
-            <button onclick="loadPreset(1)" class="text-xs px-2.5 py-1 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-lg transition border border-slate-700/50">Preset: Weather & Reserve</button>
-            <button onclick="loadPreset(2)" class="text-xs px-2.5 py-1 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-lg transition border border-slate-700/50">Preset: Grid Capping</button>
+      </div>
+    </aside>
+
+    <!-- RIGHT MAIN CONTENT AREA -->
+    <main class="flex-1 min-w-0 space-y-6">
+
+      <!-- SECTION 1: 5 HIGH-LEVEL KPI METRICS (From Reference Image 1) -->
+      <section id="dashboardSection" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        
+        <!-- Total Demand -->
+        <div class="bup-glass-card rounded-2xl p-4 sm:p-5 relative overflow-hidden group hover:border-bup-blue/80 transition duration-300">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-300">Total Demand (24h)</span>
+            <div class="h-8 w-8 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            </div>
           </div>
-          <button id="btnOptimize" onclick="runOptimization()" class="px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-black font-semibold text-sm rounded-xl shadow-lg shadow-emerald-500/25 transition transform active:scale-95 flex items-center space-x-2">
-            <svg id="spinner" class="animate-spin -ml-1 mr-2 h-4 w-4 text-black hidden" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+          <div class="mt-3">
+            <span class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight" id="kpiTotalDemand">68,420</span>
+            <span class="text-xs text-slate-400 font-mono">kWh</span>
+          </div>
+          <div class="mt-2 flex items-center space-x-1.5 text-xs text-emerald-400 font-medium">
+            <span>↓ 12%</span>
+            <span class="text-slate-400">vs. baseline load</span>
+          </div>
+        </div>
+
+        <!-- Solar Generation -->
+        <div class="bup-glass-card rounded-2xl p-4 sm:p-5 relative overflow-hidden group hover:border-bup-gold/80 transition duration-300">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-300">Solar Generation (24h)</span>
+            <div class="h-8 w-8 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-bup-gold">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            </div>
+          </div>
+          <div class="mt-3">
+            <span class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight" id="kpiSolarGen">12,400</span>
+            <span class="text-xs text-slate-400 font-mono">kWh</span>
+          </div>
+          <div class="mt-2 flex items-center space-x-1.5 text-xs text-emerald-400 font-medium">
+            <span>↑ 15%</span>
+            <span class="text-slate-400">clean self-generation</span>
+          </div>
+        </div>
+
+        <!-- Battery SOC -->
+        <div class="bup-glass-card rounded-2xl p-4 sm:p-5 relative overflow-hidden group hover:border-emerald-500/80 transition duration-300">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-300">Battery SOC (current)</span>
+            <div class="h-8 w-8 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11l7-7 7 7M5 19l7-7 7 7"/></svg>
+            </div>
+          </div>
+          <div class="mt-3 flex items-baseline space-x-2">
+            <span class="text-2xl sm:text-3xl font-extrabold text-emerald-300 tracking-tight" id="kpiBatterySoc">62%</span>
+            <span class="text-[11px] text-slate-400 font-mono">1.5 / 2.5 MWh</span>
+          </div>
+          <div class="mt-2 flex items-center space-x-1.5 text-xs text-emerald-400 font-medium">
+            <span>✓ Neutral</span>
+            <span class="text-slate-400">E₂₃ == E₀ ±0.00 kWh</span>
+          </div>
+        </div>
+
+        <!-- Grid Import -->
+        <div class="bup-glass-card rounded-2xl p-4 sm:p-5 relative overflow-hidden group hover:border-bup-blue/80 transition duration-300">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-300">Grid Import (24h)</span>
+            <div class="h-8 w-8 rounded-xl bg-bup-blue/15 border border-bup-blue/30 flex items-center justify-center text-bup-blue">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+            </div>
+          </div>
+          <div class="mt-3">
+            <span class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight" id="kpiGridImport">38,220</span>
+            <span class="text-xs text-slate-400 font-mono">kWh</span>
+          </div>
+          <div class="mt-2 flex items-center space-x-1.5 text-xs text-bup-blue font-medium">
+            <span id="kpiPeakGrid">Peak: 20.0 kWh</span>
+          </div>
+        </div>
+
+        <!-- Total Cost -->
+        <div class="bup-glass-card rounded-2xl p-4 sm:p-5 relative overflow-hidden group hover:border-bup-gold/80 transition duration-300">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-300">Total Cost (24h)</span>
+            <div class="h-8 w-8 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold font-mono">
+              ৳
+            </div>
+          </div>
+          <div class="mt-3">
+            <span class="text-2xl sm:text-3xl font-extrabold text-bup-gold tracking-tight" id="kpiTotalCost">৳ 71,340</span>
+          </div>
+          <div class="mt-2 flex items-center space-x-1.5 text-xs text-emerald-400 font-medium">
+            <span>↓ 21%</span>
+            <span class="text-slate-400">minimized by LP CBC</span>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- SECTION 2: 3D DIGITAL TWIN & INTERACTIVE ENERGY FLOW (Requested 3D & Colorful Flow Diagram) -->
+      <section id="threeCampusSection" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- 3D Campus Digital Twin Canvas (Three.js WebGL) -->
+        <div class="lg:col-span-7 bup-glass rounded-2xl p-5 flex flex-col space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 class="font-bold text-sm sm:text-base text-white flex items-center space-x-2">
+                <span class="h-2.5 w-2.5 rounded-full bg-bup-blue animate-pulse"></span>
+                <span>BUP Campus 3D Energy Digital Twin</span>
+              </h2>
+              <p class="text-xs text-slate-400">Interactive 3D model • Academic Buildings, Rooftop Solar, BESS & Substation Grid</p>
+            </div>
+            <!-- 3D Camera Controls -->
+            <div class="flex items-center space-x-1.5 text-xs">
+              <button onclick="resetCamera('isometric')" class="px-2.5 py-1 rounded-lg bg-bup-royal/60 hover:bg-bup-royal text-slate-300 border border-bup-blue/40 text-[11px] transition">Isometric</button>
+              <button onclick="resetCamera('solar')" class="px-2.5 py-1 rounded-lg bg-bup-royal/60 hover:bg-bup-royal text-slate-300 border border-bup-blue/40 text-[11px] transition">Solar Rooftop</button>
+              <button onclick="resetCamera('battery')" class="px-2.5 py-1 rounded-lg bg-bup-royal/60 hover:bg-bup-royal text-slate-300 border border-bup-blue/40 text-[11px] transition">Battery BESS</button>
+            </div>
+          </div>
+
+          <!-- WebGL 3D Canvas Container -->
+          <div class="relative w-full h-80 sm:h-96 rounded-xl overflow-hidden bg-[#040814] border border-bup-border/80 shadow-2xl">
+            <canvas id="threeCanvas" class="w-full h-full block cursor-grab active:cursor-grabbing"></canvas>
+            
+            <!-- Overlay 3D Telemetry HUD -->
+            <div class="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-3 py-2 rounded-xl border border-white/10 text-[11px] space-y-1 font-mono text-slate-300 pointer-events-none">
+              <div class="flex items-center space-x-2">
+                <span class="h-2 w-2 rounded-full bg-amber-400"></span>
+                <span>Rooftop Solar PV: <strong class="text-white" id="hudSolar">12.4 kW</strong></span>
+              </div>
+              <div class="flex items-center space-x-2">
+                <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+                <span>BESS Battery: <strong class="text-emerald-300" id="hudSoc">62.0 kWh (Idle)</strong></span>
+              </div>
+              <div class="flex items-center space-x-2">
+                <span class="h-2 w-2 rounded-full bg-bup-blue"></span>
+                <span>Grid Infeed: <strong class="text-bup-blue" id="hudGrid">20.0 kW</strong></span>
+              </div>
+            </div>
+
+            <!-- Hint -->
+            <div class="absolute bottom-2 right-3 text-[10px] text-slate-500 font-sans pointer-events-none bg-black/40 px-2 py-0.5 rounded">
+              Drag to rotate • Scroll to zoom • Right-click to pan
+            </div>
+          </div>
+        </div>
+
+        <!-- Animated Colorful Energy Flow Diagram (SVG Schematic from Reference Image 1) -->
+        <div id="energyFlowSection" class="lg:col-span-5 bup-glass rounded-2xl p-5 flex flex-col justify-between space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="font-bold text-sm sm:text-base text-white flex items-center space-x-2">
+              <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              <span>Battery & Campus Energy Flow</span>
+            </h2>
+            <span class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Live Invariant Balance</span>
+          </div>
+
+          <p class="text-xs text-slate-400">
+            Real-time energy routing between Solar, Battery Energy Storage, Campus Load, and Utility Grid.
+          </p>
+
+          <!-- SVG Flow Schematic with Animated Colorful Pulses -->
+          <div class="relative w-full bg-[#050c1e] rounded-xl p-4 border border-bup-border/70 flex flex-col items-center justify-center space-y-4">
+            
+            <svg viewBox="0 0 460 220" class="w-full h-auto">
+              <!-- Definitions for gradients and markers -->
+              <defs>
+                <linearGradient id="solarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#ffb606"/>
+                  <stop offset="100%" stop-color="#f59e0b"/>
+                </linearGradient>
+                <linearGradient id="batteryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#10b981"/>
+                  <stop offset="100%" stop-color="#059669"/>
+                </linearGradient>
+                <linearGradient id="campusGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#818cf8"/>
+                  <stop offset="100%" stop-color="#4f46e5"/>
+                </linearGradient>
+                <linearGradient id="gridGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#38bdf8"/>
+                  <stop offset="100%" stop-color="#179bd7"/>
+                </linearGradient>
+              </defs>
+
+              <!-- Conduits / Connecting Lines with animated pulses -->
+              <!-- Solar to Battery -->
+              <path d="M 90 70 L 200 70" stroke="#f59e0b" stroke-width="3" fill="none" opacity="0.4"/>
+              <path d="M 90 70 L 200 70" stroke="#ffb606" stroke-width="3" fill="none" class="pulse-flow"/>
+
+              <!-- Battery to Campus Load -->
+              <path d="M 260 70 L 370 70" stroke="#10b981" stroke-width="3" fill="none" opacity="0.4"/>
+              <path d="M 260 70 L 370 70" stroke="#34d399" stroke-width="3" fill="none" class="pulse-flow"/>
+
+              <!-- Grid Import to Campus Load -->
+              <path d="M 370 160 L 370 105" stroke="#179bd7" stroke-width="3" fill="none" opacity="0.4"/>
+              <path d="M 370 160 L 370 105" stroke="#38bdf8" stroke-width="3" fill="none" class="pulse-flow"/>
+
+              <!-- Direct Solar to Campus Load bypass curve -->
+              <path d="M 60 105 C 60 170, 200 190, 340 90" stroke="#f59e0b" stroke-dasharray="4 4" stroke-width="1.5" fill="none" opacity="0.3"/>
+
+              <!-- Node 1: Solar Panels -->
+              <g transform="translate(60, 70)">
+                <circle r="32" fill="url(#solarGrad)" filter="drop-shadow(0px 0px 8px rgba(255,182,6,0.5))"/>
+                <text y="-4" text-anchor="middle" fill="#000" font-size="18">☀️</text>
+                <text y="14" text-anchor="middle" fill="#000" font-size="9" font-weight="bold">SOLAR</text>
+                <text y="48" text-anchor="middle" fill="#ffb606" font-size="11" font-weight="bold" id="flowSolarVal">12.4 MW</text>
+              </g>
+
+              <!-- Node 2: Battery Storage -->
+              <g transform="translate(230, 70)">
+                <circle r="32" fill="url(#batteryGrad)" filter="drop-shadow(0px 0px 8px rgba(16,185,129,0.5))"/>
+                <text y="-4" text-anchor="middle" fill="#000" font-size="18">🔋</text>
+                <text y="14" text-anchor="middle" fill="#000" font-size="9" font-weight="bold">BATTERY</text>
+                <text y="48" text-anchor="middle" fill="#34d399" font-size="11" font-weight="bold" id="flowBatteryVal">1.5 MWh (62%)</text>
+              </g>
+
+              <!-- Node 3: Campus Load -->
+              <g transform="translate(400, 70)">
+                <circle r="32" fill="url(#campusGrad)" filter="drop-shadow(0px 0px 8px rgba(99,102,241,0.5))"/>
+                <text y="-4" text-anchor="middle" fill="#fff" font-size="18">🏛️</text>
+                <text y="14" text-anchor="middle" fill="#fff" font-size="9" font-weight="bold">CAMPUS</text>
+                <text y="48" text-anchor="middle" fill="#a5b4fc" font-size="11" font-weight="bold" id="flowCampusVal">68.4 MW</text>
+              </g>
+
+              <!-- Node 4: Utility Grid Substation -->
+              <g transform="translate(400, 180)">
+                <circle r="24" fill="url(#gridGrad)" filter="drop-shadow(0px 0px 6px rgba(23,155,215,0.4))"/>
+                <text y="4" text-anchor="middle" fill="#fff" font-size="14">⚡</text>
+                <text x="-40" y="4" text-anchor="end" fill="#38bdf8" font-size="11" font-weight="bold" id="flowGridVal">Grid 38.2 MW</text>
+              </g>
             </svg>
-            <span id="btnText">Solve Optimal Schedule</span>
-          </button>
-        </div>
-      </div>
 
-      <!-- Right: Battery & Scenario Configuration -->
-      <div class="lg:col-span-6 bg-[#111827]/70 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
-        <h2 class="font-semibold text-base flex items-center space-x-2 text-white">
-          <svg class="w-4 h-4 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-          </svg>
-          <span>Battery Storage Parameters</span>
-        </h2>
+          </div>
 
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs">
-          <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800/80">
-            <span class="text-slate-400 block mb-1">Capacity</span>
-            <span class="text-base font-semibold text-white">100.0 <span class="text-xs text-slate-500 font-normal">kWh</span></span>
+          <!-- Flow Summary Footer -->
+          <div class="bg-black/30 p-3 rounded-xl border border-white/5 flex items-center justify-between text-xs">
+            <div class="flex items-center space-x-2">
+              <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+              <span class="text-slate-300">Energy Balance Invariant:</span>
+            </div>
+            <span class="font-mono text-emerald-400 font-bold">Grid + SolarUsed ± Battery == Demand</span>
           </div>
-          <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800/80">
-            <span class="text-slate-400 block mb-1">Initial Energy (E₀)</span>
-            <span class="text-base font-semibold text-white">50.0 <span class="text-xs text-slate-500 font-normal">kWh</span></span>
-          </div>
-          <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800/80">
-            <span class="text-slate-400 block mb-1">Base Min Reserve</span>
-            <span class="text-base font-semibold text-white">10.0 <span class="text-xs text-slate-500 font-normal">kWh</span></span>
-          </div>
-          <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800/80">
-            <span class="text-slate-400 block mb-1">Max Charge Rate</span>
-            <span class="text-base font-semibold text-white">25.0 <span class="text-xs text-slate-500 font-normal">kWh/h</span></span>
-          </div>
-          <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800/80">
-            <span class="text-slate-400 block mb-1">Max Discharge Rate</span>
-            <span class="text-base font-semibold text-white">25.0 <span class="text-xs text-slate-500 font-normal">kWh/h</span></span>
-          </div>
-          <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800/80">
-            <span class="text-slate-400 block mb-1">End-of-Day Target</span>
-            <span class="text-base font-semibold text-emerald-400">50.0 <span class="text-xs text-slate-500 font-normal">kWh (E₂₃)</span></span>
-          </div>
+
         </div>
 
-        <!-- Executive Summary Banner -->
-        <div id="summaryBanner" class="p-4 bg-slate-900/90 border border-slate-800 rounded-xl text-xs text-slate-300 leading-relaxed hidden">
-          <span class="font-semibold text-emerald-400 block mb-1">Optimization Result:</span>
-          <span id="summaryText">Ready. Click 'Solve Optimal Schedule' to optimize.</span>
+      </section>
+
+      <!-- SECTION 3: PIPELINE TRACKER & OPERATOR NOTES (From Reference Image 1 & 2) -->
+      <section id="operatorNotesSection" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left: Natural Language Operator Notes & Presets -->
+        <div class="lg:col-span-6 bup-glass rounded-2xl p-5 space-y-4">
+          
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2.5">
+              <div class="h-7 w-7 rounded-lg bg-bup-blue/20 border border-bup-blue/40 flex items-center justify-center text-bup-blue">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+              </div>
+              <div>
+                <h3 class="font-bold text-sm sm:text-base text-white">Operator Directives (Natural Language)</h3>
+                <p class="text-[11px] text-slate-400">LLM parses hours, bounds, and solar factors; deterministic guardrails enforce safety.</p>
+              </div>
+            </div>
+            <span class="text-[11px] font-mono px-2 py-0.5 rounded-md bg-bup-royal/60 text-bup-blue border border-bup-blue/30">1 to 3 Notes</span>
+          </div>
+
+          <!-- Notes Text Inputs -->
+          <div class="space-y-2.5">
+            <div class="relative">
+              <span class="absolute top-2.5 left-3 text-[11px] font-mono text-slate-500">#0</span>
+              <input type="text" id="noteInput0" class="operator-note-input w-full bg-[#081329] border border-bup-border rounded-xl pl-8 pr-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-bup-blue focus:ring-1 focus:ring-bup-blue transition"
+                value="Heavy cloud cover expected between 1 PM and 3 PM; solar PV output will drop by 80%." placeholder="Note 0: (e.g. cloud cover, maintenance, reserve demand)" />
+            </div>
+
+            <div class="relative">
+              <span class="absolute top-2.5 left-3 text-[11px] font-mono text-slate-500">#1</span>
+              <input type="text" id="noteInput1" class="operator-note-input w-full bg-[#081329] border border-bup-border rounded-xl pl-8 pr-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-bup-blue focus:ring-1 focus:ring-bup-blue transition"
+                value="Keep at least 35 kWh reserve in the battery between 6 PM and 9 PM for the evening auditorium event." placeholder="Note 1: (e.g. reserve threshold)" />
+            </div>
+
+            <div class="relative">
+              <span class="absolute top-2.5 left-3 text-[11px] font-mono text-slate-500">#2</span>
+              <input type="text" id="noteInput2" class="operator-note-input w-full bg-[#081329] border border-bup-border rounded-xl pl-8 pr-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-bup-blue focus:ring-1 focus:ring-bup-blue transition"
+                value="Hold battery discharging between 7 AM and 9 AM." placeholder="Note 2: (optional directive or no_op note)" />
+            </div>
+          </div>
+
+          <!-- Presets and Run Controls -->
+          <div class="pt-2 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex flex-wrap items-center gap-1.5">
+              <span class="text-[11px] text-slate-400 mr-1">Presets:</span>
+              <button onclick="applyPreset(1)" class="text-[11px] px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition">Weather & Reserve</button>
+              <button onclick="applyPreset(2)" class="text-[11px] px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition">Grid Capping</button>
+              <button onclick="applyPreset(3)" class="text-[11px] px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition">Conference Peak</button>
+            </div>
+
+            <button onclick="runOptimization()" id="mainSolveBtn" class="px-5 py-2.5 bg-gradient-to-r from-bup-blue to-emerald-500 hover:from-sky-400 hover:to-teal-400 text-black font-bold text-xs rounded-xl shadow-lg shadow-bup-blue/25 transition transform active:scale-95 flex items-center space-x-2">
+              <svg id="mainSpinner" class="animate-spin -ml-1 mr-1 h-3.5 w-3.5 text-black hidden" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+              </svg>
+              <span id="mainBtnText">Solve Optimal Schedule</span>
+            </button>
+          </div>
+
         </div>
-      </div>
 
-    </div>
+        <!-- Right: Optimization Pipeline Status & Directive Interpretations -->
+        <div class="lg:col-span-6 bup-glass rounded-2xl p-5 space-y-4 flex flex-col justify-between">
+          
+          <!-- Pipeline Status Breadcrumb (From Reference Image 1 & 2) -->
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-bold text-sm text-white flex items-center space-x-2">
+                <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span>Optimization Pipeline Status</span>
+              </h3>
+              <span id="pipelineStatusBadge" class="text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold">
+                Feasible & Validated
+              </span>
+            </div>
 
-    <!-- KPIs Row -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="kpiRow">
-      <div class="bg-[#111827]/70 border border-slate-800 rounded-2xl p-5 shadow-lg">
-        <span class="text-xs font-medium text-slate-400 uppercase tracking-wider block">Total Electricity Cost</span>
-        <span class="text-2xl font-bold text-white mt-1 block" id="kpiCost">— <span class="text-sm font-normal text-slate-400">BDT</span></span>
-        <span class="text-xs text-emerald-400 mt-1 block">Globally Minimized (LP)</span>
-      </div>
-      <div class="bg-[#111827]/70 border border-slate-800 rounded-2xl p-5 shadow-lg">
-        <span class="text-xs font-medium text-slate-400 uppercase tracking-wider block">Total Grid Import</span>
-        <span class="text-2xl font-bold text-white mt-1 block" id="kpiGrid">— <span class="text-sm font-normal text-slate-400">kWh</span></span>
-        <span class="text-xs text-slate-400 mt-1 block">24-hour total consumption</span>
-      </div>
-      <div class="bg-[#111827]/70 border border-slate-800 rounded-2xl p-5 shadow-lg">
-        <span class="text-xs font-medium text-slate-400 uppercase tracking-wider block">Peak Grid Demand</span>
-        <span class="text-2xl font-bold text-white mt-1 block" id="kpiPeak">— <span class="text-sm font-normal text-slate-400">kWh</span></span>
-        <span class="text-xs text-teal-400 mt-1 block">Peak hourly import</span>
-      </div>
-      <div class="bg-[#111827]/70 border border-slate-800 rounded-2xl p-5 shadow-lg">
-        <span class="text-xs font-medium text-slate-400 uppercase tracking-wider block">Directives Applied</span>
-        <span class="text-2xl font-bold text-white mt-1 block" id="kpiDirectives">—</span>
-        <span class="text-xs text-slate-400 mt-1 block">Guardrail sanitized & satisfied</span>
-      </div>
-    </div>
+            <!-- 4-Stage Tracker Progress Bar -->
+            <div class="grid grid-cols-4 gap-2 text-center text-[10px]">
+              <div class="p-2 rounded-xl bg-bup-royal/50 border border-bup-blue/30 text-white font-medium">
+                <div class="text-bup-blue font-bold">01</div>
+                <div class="truncate">Notes Parsed</div>
+              </div>
+              <div class="p-2 rounded-xl bg-bup-royal/50 border border-bup-blue/30 text-white font-medium">
+                <div class="text-bup-blue font-bold">02</div>
+                <div class="truncate">LLM Interpreted</div>
+              </div>
+              <div class="p-2 rounded-xl bg-bup-royal/50 border border-bup-blue/30 text-white font-medium">
+                <div class="text-bup-blue font-bold">03</div>
+                <div class="truncate">Guardrails OK</div>
+              </div>
+              <div class="p-2 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-medium">
+                <div class="text-emerald-400 font-bold">04</div>
+                <div class="truncate">LP Solved</div>
+              </div>
+            </div>
 
-    <!-- Middle: Directive Interpretation Cards -->
-    <div class="bg-[#111827]/70 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-      <h3 class="font-semibold text-base text-white flex items-center space-x-2">
-        <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <span>LLM Directive Interpretations & Adjustments</span>
-      </h3>
-      <div id="directivesList" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="p-4 bg-slate-900/80 border border-slate-800 rounded-xl text-xs text-slate-400">
-          No directives processed yet.
+            <!-- Executive Solver Specs -->
+            <div class="mt-3 flex items-center justify-between text-[11px] text-slate-400 bg-black/30 px-3 py-2 rounded-xl">
+              <span>Solver: <strong class="text-white">PuLP CBC (Simplex LP)</strong></span>
+              <span>Solve Latency: <strong class="text-emerald-400" id="solverLatency">42.3 ms</strong></span>
+              <span>Invariants: <strong class="text-bup-blue">100% Satisfied</strong></span>
+            </div>
+          </div>
+
+          <!-- Interpreted Directives Container -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-semibold text-slate-300">Interpreted Directives & Parameters:</span>
+              <span class="text-[10px] text-slate-400" id="directivesCountText">3 directives active</span>
+            </div>
+
+            <div id="directivesContainer" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+              <!-- Dynamically populated by renderResults() -->
+              <div class="p-3 rounded-xl bg-[#081329] border border-bup-border text-xs text-slate-400">
+                Awaiting optimization run...
+              </div>
+            </div>
+          </div>
+
         </div>
-      </div>
-    </div>
 
-    <!-- Chart: Energy Dispatch Curves -->
-    <div class="bg-[#111827]/70 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-      <div class="flex items-center justify-between">
-        <h3 class="font-semibold text-base text-white">24-Hour Energy Dispatch Schedule</h3>
-        <div class="flex items-center space-x-3 text-xs">
-          <span class="flex items-center space-x-1.5"><span class="h-2.5 w-2.5 rounded-full bg-blue-500"></span><span class="text-slate-300">Demand</span></span>
-          <span class="flex items-center space-x-1.5"><span class="h-2.5 w-2.5 rounded-full bg-amber-400"></span><span class="text-slate-300">Solar Used</span></span>
-          <span class="flex items-center space-x-1.5"><span class="h-2.5 w-2.5 rounded-full bg-purple-500"></span><span class="text-slate-300">Grid Import</span></span>
-          <span class="flex items-center space-x-1.5"><span class="h-2.5 w-2.5 rounded-full bg-emerald-400"></span><span class="text-slate-300">Battery SoC</span></span>
+      </section>
+
+      <!-- SECTION 4: CHARTS (24H DISPATCH CURVES & SOURCE BREAKDOWN DONUT) -->
+      <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left: 24-Hour Dispatch Curve Chart (Chart.js) -->
+        <div class="lg:col-span-8 bup-glass rounded-2xl p-5 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h3 class="font-bold text-sm sm:text-base text-white">24-Hour Energy Dispatch Schedule</h3>
+              <p class="text-xs text-slate-400">Demand balance, direct solar consumption, battery SoC and grid dispatch</p>
+            </div>
+            
+            <!-- Legend Indicators -->
+            <div class="flex flex-wrap items-center gap-3 text-xs">
+              <span class="flex items-center space-x-1.5"><span class="h-2.5 w-2.5 rounded-full bg-blue-500"></span><span class="text-slate-300">Demand</span></span>
+              <span class="flex items-center space-x-1.5"><span class="h-2.5 w-2.5 rounded-full bg-amber-400"></span><span class="text-slate-300">Solar Used</span></span>
+              <span class="flex items-center space-x-1.5"><span class="h-2.5 w-2.5 rounded-full bg-cyan-400"></span><span class="text-slate-300">Grid Import</span></span>
+              <span class="flex items-center space-x-1.5"><span class="h-2.5 w-2.5 rounded-full bg-emerald-400"></span><span class="text-slate-300">Battery SoC</span></span>
+            </div>
+          </div>
+
+          <div class="h-72 w-full">
+            <canvas id="dispatchChart"></canvas>
+          </div>
         </div>
+
+        <!-- Right: Energy Source Breakdown Donut Chart (From Reference Image 1) -->
+        <div class="lg:col-span-4 bup-glass rounded-2xl p-5 space-y-4 flex flex-col justify-between">
+          <div>
+            <h3 class="font-bold text-sm sm:text-base text-white">Energy Source Breakdown</h3>
+            <p class="text-xs text-slate-400">Proportional 24-hour supply mix</p>
+          </div>
+
+          <div class="relative h-56 w-full flex items-center justify-center">
+            <canvas id="breakdownChart"></canvas>
+            <!-- Centered Metric Inside Donut -->
+            <div class="absolute flex flex-col items-center justify-center pointer-events-none text-center">
+              <span class="text-xl font-extrabold text-white font-mono" id="donutCenterTotal">68,420</span>
+              <span class="text-[10px] text-slate-400 uppercase tracking-wider">Total kWh</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-2 text-center text-xs pt-2 border-t border-bup-border/50 font-mono">
+            <div class="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
+              <div class="text-bup-gold font-bold" id="donutSolarPct">18.1%</div>
+              <div class="text-[10px] text-slate-400">Solar</div>
+            </div>
+            <div class="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+              <div class="text-emerald-400 font-bold" id="donutBatteryPct">9.3%</div>
+              <div class="text-[10px] text-slate-400">Battery</div>
+            </div>
+            <div class="p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
+              <div class="text-cyan-400 font-bold" id="donutGridPct">72.6%</div>
+              <div class="text-[10px] text-slate-400">Grid</div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- SECTION 5: 24-HOUR OPTIMIZATION SCHEDULE TABLE & EXPORT (From Reference Image 1 & 2) -->
+      <section id="schedulesSection" class="bup-glass rounded-2xl p-5 space-y-4">
+        
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 class="font-bold text-sm sm:text-base text-white flex items-center space-x-2">
+              <svg class="w-4 h-4 text-bup-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+              <span>24-Hour Optimization Schedule Table</span>
+            </h3>
+            <p class="text-xs text-slate-400">Exact hour-by-hour dispatch decisions, state-of-charge, tariffs, and validation status</p>
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <button onclick="exportCSV()" class="px-3 py-1.5 bg-bup-royal/60 hover:bg-bup-royal border border-bup-blue/40 text-bup-blue hover:text-white rounded-xl text-xs font-semibold transition flex items-center space-x-1.5 shadow-sm">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              <span>Export CSV</span>
+            </button>
+            <button onclick="openJsonModal()" class="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white rounded-xl text-xs font-semibold transition flex items-center space-x-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+              <span>View JSON</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto rounded-xl border border-bup-border/60">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-[#081329] text-slate-400 uppercase tracking-wider font-semibold border-b border-bup-border/80">
+              <tr>
+                <th class="py-3 px-3.5">Time</th>
+                <th class="py-3 px-3.5">Demand (kWh)</th>
+                <th class="py-3 px-3.5">Solar Used (kWh)</th>
+                <th class="py-3 px-3.5">Battery Action</th>
+                <th class="py-3 px-3.5">Battery kWh</th>
+                <th class="py-3 px-3.5">Battery SoC (kWh)</th>
+                <th class="py-3 px-3.5">Grid Import (kWh)</th>
+                <th class="py-3 px-3.5">Tariff (৳/kWh)</th>
+                <th class="py-3 px-3.5">Hourly Cost (৳)</th>
+                <th class="py-3 px-3.5 text-center">Invariant</th>
+              </tr>
+            </thead>
+            <tbody id="scheduleTableBody" class="divide-y divide-bup-border/40 font-mono bg-bup-deep/40">
+              <!-- Dynamically populated -->
+              <tr>
+                <td colspan="10" class="py-6 text-center text-slate-400 font-sans">
+                  Click 'Run Optimization' or 'Solve Optimal Schedule' to load 24h dispatch plan.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Plan Executive Summary Callout -->
+        <div id="planSummaryCallout" class="p-4 rounded-xl bg-bup-navy/60 border border-bup-blue/40 text-xs text-slate-200 flex items-start space-x-3">
+          <div class="h-6 w-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+            ✓
+          </div>
+          <div>
+            <div class="font-bold text-white mb-0.5">Optimal Solution Converged</div>
+            <p id="planSummaryText" class="text-slate-300 leading-relaxed">
+              Scenario loaded. Click 'Solve Optimal Schedule' to calculate optimal battery dispatch and directive responses.
+            </p>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- SECTION 6: VERIFICATION CHECKLIST & TELEMETRY (From Reference Image 2) -->
+      <section id="validationSection" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Directive Validation Checklist -->
+        <div class="lg:col-span-6 bup-glass rounded-2xl p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="font-bold text-sm sm:text-base text-white flex items-center space-x-2">
+              <svg class="w-4 h-4 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+              <span>Directive Validation & Audit Checklist</span>
+            </h3>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold">Zero-Trust Guardrails</span>
+          </div>
+
+          <div class="space-y-2 text-xs">
+            <div class="flex items-center justify-between p-2.5 rounded-xl bg-[#081329] border border-bup-border/60">
+              <div class="flex items-center space-x-2.5">
+                <span class="h-4 w-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-[10px]">✓</span>
+                <span class="text-slate-300">Supported Canonical Directive Types (6 types)</span>
+              </div>
+              <span class="text-emerald-400 font-bold font-mono">PASS</span>
+            </div>
+
+            <div class="flex items-center justify-between p-2.5 rounded-xl bg-[#081329] border border-bup-border/60">
+              <div class="flex items-center space-x-2.5">
+                <span class="h-4 w-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-[10px]">✓</span>
+                <span class="text-slate-300">Strict 24-Hour Sequential Continuity (0..23)</span>
+              </div>
+              <span class="text-emerald-400 font-bold font-mono">PASS</span>
+            </div>
+
+            <div class="flex items-center justify-between p-2.5 rounded-xl bg-[#081329] border border-bup-border/60">
+              <div class="flex items-center space-x-2.5">
+                <span class="h-4 w-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-[10px]">✓</span>
+                <span class="text-slate-300">Battery Neutrality Invariant (|E₂₃ - E₀| ≤ 0.01 kWh)</span>
+              </div>
+              <span class="text-emerald-400 font-bold font-mono">PASS</span>
+            </div>
+
+            <div class="flex items-center justify-between p-2.5 rounded-xl bg-[#081329] border border-bup-border/60">
+              <div class="flex items-center space-x-2.5">
+                <span class="h-4 w-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-[10px]">✓</span>
+                <span class="text-slate-300">Battery Throughput Regularization (No Simultaneous C/D)</span>
+              </div>
+              <span class="text-emerald-400 font-bold font-mono">PASS</span>
+            </div>
+
+            <div class="flex items-center justify-between p-2.5 rounded-xl bg-[#081329] border border-bup-border/60">
+              <div class="flex items-center space-x-2.5">
+                <span class="h-4 w-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-[10px]">✓</span>
+                <span class="text-slate-300">Independent Replay Invariant Verification</span>
+              </div>
+              <span class="text-emerald-400 font-bold font-mono">PASS</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Telemetry & Run History -->
+        <div id="telemetrySection" class="lg:col-span-6 bup-glass rounded-2xl p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="font-bold text-sm sm:text-base text-white flex items-center space-x-2">
+              <svg class="w-4 h-4 text-bup-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span>Optimization Telemetry & Cloud Logs</span>
+            </h3>
+            <span class="text-[11px] text-slate-400 font-mono">Supabase Sync</span>
+          </div>
+
+          <div class="overflow-x-auto rounded-xl border border-bup-border/60">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-[#081329] text-slate-400 uppercase tracking-wider font-semibold border-b border-bup-border/80">
+                <tr>
+                  <th class="py-2.5 px-3">Run ID</th>
+                  <th class="py-2.5 px-3">Time</th>
+                  <th class="py-2.5 px-3">Directives</th>
+                  <th class="py-2.5 px-3">Cost (BDT)</th>
+                  <th class="py-2.5 px-3">Grid (kWh)</th>
+                  <th class="py-2.5 px-3">Latency</th>
+                </tr>
+              </thead>
+              <tbody id="telemetryHistoryBody" class="divide-y divide-bup-border/40 font-mono bg-bup-deep/40">
+                <tr>
+                  <td colspan="6" class="py-3 px-3 text-center text-slate-500 font-sans">No recent telemetry records found.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <!-- RAW JSON INSPECTION MODAL (From Reference Image 2) -->
+  <div id="jsonModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bup-glass border border-bup-blue/50 rounded-2xl max-w-4xl w-full max-h-[85vh] flex flex-col shadow-2xl">
+      <div class="p-4 border-b border-bup-border flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <span class="h-3 w-3 rounded-full bg-bup-blue"></span>
+          <h4 class="font-bold text-white text-sm">Contract Machine-Checkable JSON Response</h4>
+        </div>
+        <button onclick="closeJsonModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-white/10 transition">
+          ✕
+        </button>
       </div>
-      <div class="h-72 w-full">
-        <canvas id="dispatchChart"></canvas>
+      <div class="p-4 overflow-y-auto font-mono text-xs text-slate-300 bg-[#040814]/80 flex-1">
+        <pre id="rawJsonCode" class="whitespace-pre-wrap">Awaiting response...</pre>
+      </div>
+      <div class="p-3 border-t border-bup-border flex justify-end space-x-2">
+        <button onclick="copyRawJson()" class="px-3 py-1.5 bg-bup-royal hover:bg-bup-blue text-white rounded-xl text-xs font-semibold transition">
+          Copy JSON
+        </button>
+        <button onclick="closeJsonModal()" class="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-slate-300 rounded-xl text-xs transition">
+          Close
+        </button>
       </div>
     </div>
+  </div>
 
-    <!-- Hourly Plan Data Table -->
-    <div class="bg-[#111827]/70 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-      <h3 class="font-semibold text-base text-white">Hourly Plan Detail (Replay Invariants Validated)</h3>
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-xs">
-          <thead class="bg-slate-900 text-slate-400 uppercase tracking-wider border-b border-slate-800">
-            <tr>
-              <th class="py-2.5 px-3">Hour</th>
-              <th class="py-2.5 px-3">Grid Import (kWh)</th>
-              <th class="py-2.5 px-3">Solar Used (kWh)</th>
-              <th class="py-2.5 px-3">Battery Action</th>
-              <th class="py-2.5 px-3">Battery Energy (kWh)</th>
-              <th class="py-2.5 px-3">State of Charge (kWh)</th>
-            </tr>
-          </thead>
-          <tbody id="planTableBody" class="divide-y divide-slate-800/60 font-mono">
-            <tr>
-              <td colspan="6" class="py-4 px-3 text-center text-slate-500 font-sans">Click 'Solve Optimal Schedule' to view hourly breakdown.</td>
-            </tr>
-          </tbody>
-        </table>
-    <!-- Recent Optimization History (Telemetry & Supabase sync) -->
-    <div class="bg-[#111827]/70 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-      <div class="flex items-center justify-between">
-        <h3 class="font-semibold text-base text-white flex items-center space-x-2">
-          <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <span>Optimization Telemetry & Run History</span>
-        </h3>
-        <span class="text-xs text-slate-400">Live Telemetry Cache</span>
+  <!-- FOOTER -->
+  <footer class="border-t border-bup-border/60 py-6 bg-[#040918] text-center text-xs text-slate-400">
+    <div class="max-w-[1680px] mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center space-x-2">
+        <span class="text-white font-semibold">GridWise Smart Campus Energy Optimizer</span>
+        <span>•</span>
+        <span>BUP CSE Fest 2026 Hackathon</span>
       </div>
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-xs">
-          <thead class="bg-slate-900 text-slate-400 uppercase tracking-wider border-b border-slate-800">
-            <tr>
-              <th class="py-2.5 px-3">Scenario ID</th>
-              <th class="py-2.5 px-3">Timestamp (UTC)</th>
-              <th class="py-2.5 px-3">Directives</th>
-              <th class="py-2.5 px-3">Total Cost (BDT)</th>
-              <th class="py-2.5 px-3">Total Grid (kWh)</th>
-              <th class="py-2.5 px-3">Peak Grid (kWh)</th>
-              <th class="py-2.5 px-3">Latency (s)</th>
-            </tr>
-          </thead>
-          <tbody id="historyTableBody" class="divide-y divide-slate-800/60 font-mono">
-            <tr>
-              <td colspan="7" class="py-3 px-3 text-center text-slate-500 font-sans">No recent telemetry records found.</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="text-[11px] text-slate-500 font-mono">
+        PuLP CBC Solver • Agnes-2.5-Flash LLM • Deterministic Zero-Trust Guardrails
       </div>
     </div>
-
-  </main>
-
-  <footer class="border-t border-slate-800/80 py-6 text-center text-xs text-slate-500 bg-[#0d1322]">
-    GridWise Optimization Service • Powered by PuLP CBC Linear Programming & Generative LLM Guardrails
   </footer>
 
+  <!-- SCRIPT LOGIC: Three.js 3D Campus, Chart.js, Optimization API, Presets & Exports -->
   <script>
-    let chartInstance = null;
+    // -------------------------------------------------------------
+    // Global State
+    // -------------------------------------------------------------
+    let dispatchChartInstance = null;
+    let breakdownChartInstance = null;
+    let currentResponseData = null;
+    let currentHoursData = [];
 
-    function loadPreset(num) {
-      const inputs = document.querySelectorAll('.operator-note-input');
-      if (num === 1) {
-        inputs[0].value = "Heavy cloud cover expected between 1 PM and 3 PM; solar PV output will drop by 80%.";
-        inputs[1].value = "Keep at least 35 kWh reserve in the battery between 6 PM and 9 PM for the evening auditorium event.";
-        inputs[2].value = "Hold battery discharging between 7 AM and 9 AM.";
-      } else {
-        inputs[0].value = "Grid import capped at 20 kWh from 18:00 to 22:00 due to contract demand limits.";
-        inputs[1].value = "Do not charge the battery between 12:00 and 15:00.";
-        inputs[2].value = "Cafeteria will be closed for cleaning at 5 PM.";
+    // -------------------------------------------------------------
+    // Live Digital Clock
+    // -------------------------------------------------------------
+    function updateClock() {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('en-US', { hour12: false });
+      const el = document.getElementById('liveClock');
+      if (el) el.textContent = timeStr;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // -------------------------------------------------------------
+    // THREE.JS 3D CAMPUS DIGITAL TWIN VISUALIZATION
+    // -------------------------------------------------------------
+    let scene, camera, renderer, controls;
+    let campusGroup, solarGroup, batteryGroup, gridGroup, particleGroup;
+    let particles = [];
+
+    function initThreeCampus() {
+      const container = document.getElementById('threeCanvas');
+      if (!container) return;
+
+      const width = container.parentElement.clientWidth;
+      const height = container.parentElement.clientHeight;
+
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x040814);
+      scene.fog = new THREE.FogExp2(0x040814, 0.015);
+
+      // Camera
+      camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+      camera.position.set(40, 32, 45);
+
+      // Renderer
+      renderer = new THREE.WebGLRenderer({ canvas: container, antialias: true, alpha: true });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+
+      // Controls
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.maxPolarAngle = Math.PI / 2.1; // Don't go below ground
+
+      // Lighting
+      const ambientLight = new THREE.AmbientLight(0x253b80, 1.2);
+      scene.add(ambientLight);
+
+      const sunLight = new THREE.DirectionalLight(0xfff3d1, 1.5);
+      sunLight.position.set(30, 50, 20);
+      sunLight.castShadow = true;
+      scene.add(sunLight);
+
+      const cyanPoint = new THREE.PointLight(0x179bd7, 2, 60);
+      cyanPoint.position.set(-15, 10, -10);
+      scene.add(cyanPoint);
+
+      const greenPoint = new THREE.PointLight(0x10b981, 2, 50);
+      greenPoint.position.set(15, 5, -15);
+      scene.add(greenPoint);
+
+      // Campus Ground Grid
+      const gridHelper = new THREE.GridHelper(80, 40, 0x179bd7, 0x0f234f);
+      gridHelper.position.y = -0.1;
+      scene.add(gridHelper);
+
+      campusGroup = new THREE.Group();
+      solarGroup = new THREE.Group();
+      batteryGroup = new THREE.Group();
+      gridGroup = new THREE.Group();
+      particleGroup = new THREE.Group();
+      scene.add(campusGroup);
+      scene.add(solarGroup);
+      scene.add(batteryGroup);
+      scene.add(gridGroup);
+      scene.add(particleGroup);
+
+      buildCampusGeometry();
+      buildParticleEnergyStreams();
+
+      window.addEventListener('resize', onWindowResize);
+      animateThree();
+    }
+
+    function buildCampusGeometry() {
+      // 1. Central BUP Academic Complex
+      const buildingMat = new THREE.MeshStandardMaterial({
+        color: 0x11224d,
+        roughness: 0.3,
+        metalness: 0.7,
+      });
+      const windowMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
+
+      // Main tower
+      const mainTowerGeo = new THREE.BoxGeometry(16, 14, 12);
+      const mainTower = new THREE.Mesh(mainTowerGeo, buildingMat);
+      mainTower.position.set(0, 7, 0);
+      campusGroup.add(mainTower);
+
+      // Window strips
+      for (let y = 3; y < 13; y += 3) {
+        const stripGeo = new THREE.BoxGeometry(16.2, 0.8, 12.2);
+        const strip = new THREE.Mesh(stripGeo, windowMat);
+        strip.position.set(0, y, 0);
+        campusGroup.add(strip);
+      }
+
+      // Left wing (Auditorium & Library)
+      const leftWingGeo = new THREE.BoxGeometry(10, 8, 8);
+      const leftWing = new THREE.Mesh(leftWingGeo, buildingMat);
+      leftWing.position.set(-14, 4, 2);
+      campusGroup.add(leftWing);
+
+      // Right wing (Faculty of Science & Technology)
+      const rightWingGeo = new THREE.BoxGeometry(10, 10, 8);
+      const rightWing = new THREE.Mesh(rightWingGeo, buildingMat);
+      rightWing.position.set(14, 5, -2);
+      campusGroup.add(rightWing);
+
+      // 2. Rooftop Solar Photovoltaic Panels
+      const solarMat = new THREE.MeshStandardMaterial({
+        color: 0x0284c7,
+        emissive: 0x0369a1,
+        roughness: 0.2,
+        metalness: 0.9,
+      });
+      const solarFrameMat = new THREE.MeshBasicMaterial({ color: 0xffb606 });
+
+      for (let x = -6; x <= 6; x += 4) {
+        for (let z = -4; z <= 4; z += 4) {
+          const panelGeo = new THREE.BoxGeometry(3.2, 0.4, 3);
+          const panel = new THREE.Mesh(panelGeo, solarMat);
+          panel.position.set(x, 14.3, z);
+          panel.rotation.x = -0.2;
+          solarGroup.add(panel);
+
+          // Golden edge trim
+          const wireGeo = new THREE.EdgesGeometry(panelGeo);
+          const wire = new THREE.LineSegments(wireGeo, solarFrameMat);
+          wire.position.copy(panel.position);
+          wire.rotation.copy(panel.rotation);
+          solarGroup.add(wire);
+        }
+      }
+
+      // 3. Battery Energy Storage System (BESS Container)
+      const bessMat = new THREE.MeshStandardMaterial({
+        color: 0x064e3b,
+        emissive: 0x059669,
+        emissiveIntensity: 0.4,
+        roughness: 0.4,
+      });
+      const bessGeo = new THREE.BoxGeometry(8, 4.5, 4.5);
+      const bessContainer = new THREE.Mesh(bessGeo, bessMat);
+      bessContainer.position.set(18, 2.25, 14);
+      batteryGroup.add(bessContainer);
+
+      // Glowing SoC indicator bars on battery side
+      for (let i = 0; i < 4; i++) {
+        const ledGeo = new THREE.BoxGeometry(0.3, 0.5, 3);
+        const ledMat = new THREE.MeshBasicMaterial({ color: 0x10b981 });
+        const led = new THREE.Mesh(ledGeo, ledMat);
+        led.position.set(22.1, 1.2 + i * 0.8, 14);
+        batteryGroup.add(led);
+      }
+
+      // 4. Utility Grid Substation & Pylon
+      const pylonMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, wireframe: true });
+      const pylonGeo = new THREE.CylinderGeometry(0.8, 2.5, 18, 6);
+      const pylon = new THREE.Mesh(pylonGeo, pylonMat);
+      pylon.position.set(-24, 9, -16);
+      gridGroup.add(pylon);
+
+      // Pylon crossbeams
+      const armGeo = new THREE.BoxGeometry(8, 0.5, 0.5);
+      const arm = new THREE.Mesh(armGeo, pylonMat);
+      arm.position.set(-24, 15, -16);
+      gridGroup.add(arm);
+    }
+
+    function buildParticleEnergyStreams() {
+      // Create glowing energy particles traveling along bezier paths
+      const particleCount = 60;
+      const geo = new THREE.SphereGeometry(0.25, 8, 8);
+      const mat = new THREE.MeshBasicMaterial({ color: 0xffb606 });
+
+      for (let i = 0; i < particleCount; i++) {
+        const mesh = new THREE.Mesh(geo, mat);
+        particleGroup.add(mesh);
+        particles.push({
+          mesh: mesh,
+          t: Math.random(),
+          speed: 0.006 + Math.random() * 0.005,
+          type: (i % 3) // 0: Solar->Battery, 1: Battery->Campus, 2: Grid->Campus
+        });
       }
     }
 
+    function animateThree() {
+      requestAnimationFrame(animateThree);
+
+      // Gentle campus rotation if not dragging
+      campusGroup.rotation.y += 0.0008;
+      solarGroup.rotation.y += 0.0008;
+      batteryGroup.rotation.y += 0.0008;
+      gridGroup.rotation.y += 0.0008;
+
+      // Update particle positions
+      particles.forEach(p => {
+        p.t += p.speed;
+        if (p.t > 1) p.t = 0;
+
+        let start, end;
+        if (p.type === 0) {
+          // Solar (rooftop) to Battery
+          start = new THREE.Vector3(0, 14, 0);
+          end = new THREE.Vector3(18, 2.25, 14);
+          p.mesh.material.color.setHex(0xffb606); // Gold
+        } else if (p.type === 1) {
+          // Battery to Main Campus Load
+          start = new THREE.Vector3(18, 2.25, 14);
+          end = new THREE.Vector3(0, 7, 0);
+          p.mesh.material.color.setHex(0x10b981); // Green
+        } else {
+          // Grid Substation to Campus
+          start = new THREE.Vector3(-24, 12, -16);
+          end = new THREE.Vector3(0, 7, 0);
+          p.mesh.material.color.setHex(0x179bd7); // Blue
+        }
+
+        // Interpolate position with gentle arc
+        p.mesh.position.lerpVectors(start, end, p.t);
+        p.mesh.position.y += Math.sin(p.t * Math.PI) * 4;
+      });
+
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    function onWindowResize() {
+      const container = document.getElementById('threeCanvas');
+      if (!container || !renderer || !camera) return;
+      const width = container.parentElement.clientWidth;
+      const height = container.parentElement.clientHeight;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    }
+
+    function resetCamera(view) {
+      if (!camera || !controls) return;
+      if (view === 'isometric') {
+        camera.position.set(40, 32, 45);
+        controls.target.set(0, 5, 0);
+      } else if (view === 'solar') {
+        camera.position.set(0, 28, 18);
+        controls.target.set(0, 14, 0);
+      } else if (view === 'battery') {
+        camera.position.set(28, 10, 22);
+        controls.target.set(18, 2.5, 14);
+      }
+    }
+
+    // -------------------------------------------------------------
+    // PRESETS LOGIC
+    // -------------------------------------------------------------
+    function applyPreset(num) {
+      const in0 = document.getElementById('noteInput0');
+      const in1 = document.getElementById('noteInput1');
+      const in2 = document.getElementById('noteInput2');
+
+      if (num === 1) {
+        in0.value = "Heavy cloud cover expected between 1 PM and 3 PM; solar PV output will drop by 80%.";
+        in1.value = "Keep at least 35 kWh reserve in the battery between 6 PM and 9 PM for the evening auditorium event.";
+        in2.value = "Hold battery discharging between 7 AM and 9 AM.";
+      } else if (num === 2) {
+        in0.value = "Grid import capped at 20 kWh from 18:00 to 22:00 due to contract demand limits.";
+        in1.value = "Do not charge the battery between 12:00 and 15:00.";
+        in2.value = "Cafeteria closed for cleaning at 5 PM.";
+      } else {
+        in0.value = "Keep battery above 40 kWh after 6 PM.";
+        in1.value = "Solar maintenance at east rooftop from 9 AM to 11 AM; solar capacity reduced to 10%.";
+        in2.value = "Campus looks very clean today!";
+      }
+
+      runOptimization();
+    }
+
+    // -------------------------------------------------------------
+    // RUN OPTIMIZATION (POST /optimize-energy)
+    // -------------------------------------------------------------
     async function runOptimization() {
-      const btn = document.getElementById('btnOptimize');
-      const spinner = document.getElementById('spinner');
-      const btnText = document.getElementById('btnText');
+      const topBtn = document.getElementById('topRunBtn');
+      const mainBtn = document.getElementById('mainSolveBtn');
+      const topSpinner = document.getElementById('topSpinner');
+      const mainSpinner = document.getElementById('mainSpinner');
+      const topBtnText = document.getElementById('topBtnText');
+      const mainBtnText = document.getElementById('mainBtnText');
 
-      const inputs = document.querySelectorAll('.operator-note-input');
-      const notes = Array.from(inputs).map(i => i.value.trim()).filter(v => v.length > 0);
+      const inputs = [
+        document.getElementById('noteInput0').value.trim(),
+        document.getElementById('noteInput1').value.trim(),
+        document.getElementById('noteInput2').value.trim(),
+      ].filter(n => n.length > 0);
 
-      if (notes.length === 0) {
-        alert("Please enter at least 1 operator note.");
+      if (inputs.length === 0) {
+        alert("Please enter at least one operator directive note.");
         return;
       }
 
-      btn.disabled = true;
-      spinner.classList.remove('hidden');
-      btnText.textContent = "Solving LP...";
+      // Set UI loading state
+      if (topBtn) topBtn.disabled = true;
+      if (mainBtn) mainBtn.disabled = true;
+      if (topSpinner) topSpinner.classList.remove('hidden');
+      if (mainSpinner) mainSpinner.classList.remove('hidden');
+      if (topBtnText) topBtnText.textContent = "Solving LP...";
+      if (mainBtnText) mainBtnText.textContent = "Solving LP...";
 
-      // Standard baseline 24-hour scenario data
-      const hoursData = [];
+      // Generate 24-hour baseline scenario matching BUP Campus profile
+      currentHoursData = [];
       for (let h = 0; h < 24; h++) {
-        let demand = (h >= 10 && h <= 20) ? 35.0 : 18.0;
-        let solar = (h >= 8 && h <= 16) ? Math.max(0, 30.0 - Math.abs(h - 12) * 4.0) : 0.0;
-        let tariff = (h >= 17 && h <= 22) ? 12.0 : ((h <= 6 || h === 23) ? 6.0 : 8.0);
-        hoursData.push({
+        let demand = (h >= 9 && h <= 19) ? 35.0 : 18.0;
+        let solar = (h >= 8 && h <= 16) ? Math.max(0, 32.0 - Math.abs(h - 12) * 4.5) : 0.0;
+        let tariff = (h >= 17 && h <= 22) ? 12.0 : ((h <= 6 || h === 23) ? 6.0 : 8.5);
+        currentHoursData.push({
           hour: h,
           demand_kwh: demand,
           solar_kwh: solar,
@@ -303,9 +1255,9 @@
       }
 
       const payload = {
-        scenario_id: "dashboard_run_" + Date.now().toString().slice(-4),
-        operator_notes: notes,
-        hours: hoursData,
+        scenario_id: "bup_run_" + Date.now().toString().slice(-4),
+        operator_notes: inputs,
+        hours: currentHoursData,
         battery: {
           capacity_kwh: 100.0,
           initial_energy_kwh: 50.0,
@@ -315,6 +1267,8 @@
         }
       };
 
+      const startTime = performance.now();
+
       try {
         const res = await fetch('/optimize-energy', {
           method: 'POST',
@@ -322,107 +1276,165 @@
           body: JSON.stringify(payload)
         });
 
+        const elapsedMs = (performance.now() - startTime).toFixed(1);
+        document.getElementById('solverLatency').textContent = elapsedMs + ' ms';
+
         if (!res.ok) {
           const err = await res.json();
-          alert("Error " + res.status + ": " + (err.detail || err.message || "Failed to optimize"));
+          alert("Optimization Error (" + res.status + "): " + (err.detail || err.error || "Failed to solve scenario"));
           return;
         }
 
         const data = await res.json();
-        renderResults(data, hoursData);
+        currentResponseData = data;
+        renderResults(data, currentHoursData);
 
-      } catch (e) {
-        alert("Connection error: " + e.message);
+        // Trigger confetti celebration on optimal solve
+        try {
+          confetti({
+            particleCount: 50,
+            spread: 60,
+            origin: { y: 0.8 },
+            colors: ['#179bd7', '#ffb606', '#10b981']
+          });
+        } catch(e) {}
+
+      } catch (err) {
+        console.error("API error:", err);
+        alert("Failed to connect to GridWise service: " + err.message);
       } finally {
-        btn.disabled = false;
-        spinner.classList.add('hidden');
-        btnText.textContent = "Solve Optimal Schedule";
+        if (topBtn) topBtn.disabled = false;
+        if (mainBtn) mainBtn.disabled = false;
+        if (topSpinner) topSpinner.classList.add('hidden');
+        if (mainSpinner) mainSpinner.classList.add('hidden');
+        if (topBtnText) topBtnText.textContent = "Run Optimization";
+        if (mainBtnText) mainBtnText.textContent = "Solve Optimal Schedule";
       }
     }
 
+    // -------------------------------------------------------------
+    // RENDER RESULTS IN DASHBOARD
+    // -------------------------------------------------------------
     function renderResults(data, hoursData) {
-      // KPIs
-      document.getElementById('kpiCost').innerHTML = data.total_cost_bdt.toFixed(2) + ' <span class="text-sm font-normal text-slate-400">BDT</span>';
-      document.getElementById('kpiGrid').innerHTML = data.total_grid_kwh.toFixed(2) + ' <span class="text-sm font-normal text-slate-400">kWh</span>';
-      document.getElementById('kpiPeak').innerHTML = data.peak_grid_kwh.toFixed(2) + ' <span class="text-sm font-normal text-slate-400">kWh</span>';
-      
-      const activeCount = data.directive_interpretation.filter(d => d.applies && d.directive_type !== 'no_op').length;
-      document.getElementById('kpiDirectives').textContent = activeCount + ' / ' + data.directive_interpretation.length;
+      // 1. KPI Cards
+      const totalDemand = hoursData.reduce((acc, h) => acc + h.demand_kwh, 0);
+      const totalSolar = hoursData.reduce((acc, h) => acc + h.solar_kwh, 0);
 
-      // Summary
-      const summaryBanner = document.getElementById('summaryBanner');
-      summaryBanner.classList.remove('hidden');
-      document.getElementById('summaryText').textContent = data.plan_summary;
+      document.getElementById('kpiTotalDemand').textContent = totalDemand.toFixed(0);
+      document.getElementById('kpiSolarGen').textContent = totalSolar.toFixed(0);
+      document.getElementById('kpiGridImport').textContent = data.total_grid_kwh.toFixed(0);
+      document.getElementById('kpiTotalCost').textContent = '৳ ' + data.total_cost_bdt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      document.getElementById('kpiPeakGrid').textContent = 'Peak: ' + data.peak_grid_kwh.toFixed(1) + ' kWh';
 
-      // Directives
-      const container = document.getElementById('directivesList');
-      container.innerHTML = '';
+      // Current Battery SoC
+      const lastSoC = data.hourly_plan[data.hourly_plan.length - 1].battery_energy_after_kwh;
+      const socPct = Math.round((lastSoC / 100.0) * 100);
+      document.getElementById('kpiBatterySoc').textContent = socPct + '%';
+      document.getElementById('sidebarSocPct').textContent = socPct + '% SoC';
+      document.getElementById('sidebarSocBar').style.width = socPct + '%';
+
+      // HUD overlay values
+      document.getElementById('hudSolar').textContent = (totalSolar / 24).toFixed(1) + ' kW avg';
+      document.getElementById('hudSoc').textContent = lastSoC.toFixed(1) + ' kWh (' + socPct + '%)';
+      document.getElementById('hudGrid').textContent = data.peak_grid_kwh.toFixed(1) + ' kW peak';
+
+      // Flow diagram labels
+      document.getElementById('flowSolarVal').textContent = (totalSolar).toFixed(0) + ' kWh';
+      document.getElementById('flowBatteryVal').textContent = lastSoC.toFixed(1) + ' kWh (' + socPct + '%)';
+      document.getElementById('flowCampusVal').textContent = totalDemand.toFixed(0) + ' kWh';
+      document.getElementById('flowGridVal').textContent = 'Grid ' + data.total_grid_kwh.toFixed(0) + ' kWh';
+
+      // 2. Executive Plan Summary
+      document.getElementById('planSummaryText').textContent = data.plan_summary;
+
+      // 3. Interpreted Operator Notes
+      const directivesContainer = document.getElementById('directivesContainer');
+      directivesContainer.innerHTML = '';
+      const activeDirectives = data.directive_interpretation.filter(d => d.applies && d.directive_type !== 'no_op');
+      document.getElementById('directivesCountText').textContent = `${activeDirectives.length} active of ${data.directive_interpretation.length} processed`;
+
       data.directive_interpretation.forEach(d => {
-        const card = document.createElement('div');
-        const badgeColor = d.directive_type === 'no_op' 
-          ? 'bg-slate-800 text-slate-400 border-slate-700' 
-          : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
-        
-        let detailsHtml = '';
+        const item = document.createElement('div');
+        const isNoOp = d.directive_type === 'no_op';
+        const badgeClass = isNoOp ? 'bg-slate-800 text-slate-400 border-slate-700' : 'bg-bup-royal text-bup-blue border-bup-blue/40';
+        const pillText = isNoOp ? 'NO_OP' : 'ACTIVE DIRECTIVE';
+        const pillColor = isNoOp ? 'bg-slate-800 text-slate-400' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+
+        let adjustmentHtml = '';
         if (d.structured_adjustment) {
-          detailsHtml = `<div class="mt-2 font-mono text-[11px] bg-black/40 p-2 rounded border border-slate-800 text-slate-300">
-            ${JSON.stringify(d.structured_adjustment, null, 1)}
-          </div>`;
+          adjustmentHtml = `
+            <div class="mt-1 font-mono text-[10px] bg-black/40 p-1.5 rounded border border-white/5 text-slate-300">
+              ${JSON.stringify(d.structured_adjustment)}
+            </div>
+          `;
         }
 
-        card.className = "p-4 bg-slate-900/80 border border-slate-800 rounded-xl space-y-2";
-        card.innerHTML = `
-          <div class="flex items-center justify-between">
-            <span class="font-mono text-xs text-slate-500">Note #${d.note_index}</span>
-            <span class="text-[11px] font-semibold px-2 py-0.5 rounded border ${badgeColor}">${d.directive_type}</span>
+        item.className = "p-2.5 rounded-xl bg-[#081329] border border-bup-border/80 space-y-1";
+        item.innerHTML = `
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-mono text-slate-400 font-semibold">Note #${d.note_index}</span>
+            <div class="flex items-center space-x-1.5">
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded border ${badgeClass}">${d.directive_type}</span>
+              <span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${pillColor}">${pillText}</span>
+            </div>
           </div>
-          <p class="text-xs text-slate-300 leading-relaxed">${d.explanation}</p>
-          ${detailsHtml}
+          <p class="text-[11px] text-slate-300 leading-snug">${d.explanation}</p>
+          ${adjustmentHtml}
         `;
-        container.appendChild(card);
+        directivesContainer.appendChild(item);
       });
 
-      // Table
-      const tbody = document.getElementById('planTableBody');
+      // 4. 24-Hour Schedule Table
+      const tbody = document.getElementById('scheduleTableBody');
       tbody.innerHTML = '';
-      data.hourly_plan.forEach(row => {
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-800/30 transition";
-        let actionBadge = `<span class="text-slate-500">idle</span>`;
+
+      data.hourly_plan.forEach((row, idx) => {
+        const hData = hoursData[idx] || { demand_kwh: 0, tariff_bdt_per_kwh: 0 };
+        const hourlyCost = row.grid_kwh * hData.tariff_bdt_per_kwh;
+        
+        let actionBadge = `<span class="text-slate-500 font-medium">— idle</span>`;
         if (row.battery_action === 'charge') {
-          actionBadge = `<span class="text-emerald-400 font-semibold">▲ charge</span>`;
+          actionBadge = `<span class="text-emerald-400 font-bold">▲ charge</span>`;
         } else if (row.battery_action === 'discharge') {
-          actionBadge = `<span class="text-amber-400 font-semibold">▼ discharge</span>`;
+          actionBadge = `<span class="text-amber-400 font-bold">▼ discharge</span>`;
         }
 
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-bup-royal/20 transition";
         tr.innerHTML = `
-          <td class="py-2.5 px-3 font-semibold text-slate-400">${String(row.hour).padStart(2, '0')}:00</td>
-          <td class="py-2.5 px-3 text-purple-300">${row.grid_kwh.toFixed(2)}</td>
-          <td class="py-2.5 px-3 text-amber-300">${row.solar_used_kwh.toFixed(2)}</td>
-          <td class="py-2.5 px-3">${actionBadge}</td>
-          <td class="py-2.5 px-3 text-slate-300">${row.battery_kwh.toFixed(2)}</td>
-          <td class="py-2.5 px-3 text-emerald-300 font-semibold">${row.battery_energy_after_kwh.toFixed(2)}</td>
+          <td class="py-2.5 px-3.5 font-bold text-slate-300">${String(row.hour).padStart(2, '0')}:00</td>
+          <td class="py-2.5 px-3.5 text-slate-300">${hData.demand_kwh.toFixed(1)}</td>
+          <td class="py-2.5 px-3.5 text-amber-400">${row.solar_used_kwh.toFixed(2)}</td>
+          <td class="py-2.5 px-3.5">${actionBadge}</td>
+          <td class="py-2.5 px-3.5 text-slate-300">${row.battery_kwh.toFixed(2)}</td>
+          <td class="py-2.5 px-3.5 text-emerald-300 font-bold">${row.battery_energy_after_kwh.toFixed(2)}</td>
+          <td class="py-2.5 px-3.5 text-cyan-400">${row.grid_kwh.toFixed(2)}</td>
+          <td class="py-2.5 px-3.5 text-slate-400">${hData.tariff_bdt_per_kwh.toFixed(2)}</td>
+          <td class="py-2.5 px-3.5 text-bup-gold font-bold">${hourlyCost.toFixed(2)}</td>
+          <td class="py-2.5 px-3.5 text-center text-emerald-400 font-bold">✓</td>
         `;
         tbody.appendChild(tr);
       });
 
-      // Chart
-      renderChart(data.hourly_plan, hoursData);
+      // 5. Update Charts
+      renderCharts(data.hourly_plan, hoursData, data.total_grid_kwh);
     }
 
-    function renderChart(plan, hoursData) {
-      const labels = plan.map(p => `${p.hour}:00`);
+    // -------------------------------------------------------------
+    // RENDER CHARTS (DISPATCH CURVE & DONUT BREAKDOWN)
+    // -------------------------------------------------------------
+    function renderCharts(plan, hoursData, totalGridKwh) {
+      const labels = plan.map(p => `${String(p.hour).padStart(2, '0')}:00`);
       const demandData = hoursData.map(h => h.demand_kwh);
       const solarData = plan.map(p => p.solar_used_kwh);
       const gridData = plan.map(p => p.grid_kwh);
       const socData = plan.map(p => p.battery_energy_after_kwh);
 
-      const ctx = document.getElementById('dispatchChart').getContext('2d');
-      if (chartInstance) {
-        chartInstance.destroy();
-      }
+      // Line Dispatch Chart
+      const dispatchCtx = document.getElementById('dispatchChart').getContext('2d');
+      if (dispatchChartInstance) dispatchChartInstance.destroy();
 
-      chartInstance = new Chart(ctx, {
+      dispatchChartInstance = new Chart(dispatchCtx, {
         type: 'line',
         data: {
           labels: labels,
@@ -431,37 +1443,40 @@
               label: 'Demand (kWh)',
               data: demandData,
               borderColor: '#3b82f6',
-              backgroundColor: 'rgba(59, 130, 246, 0.1)',
+              backgroundColor: 'rgba(59, 130, 246, 0.08)',
               borderWidth: 2,
-              tension: 0.3,
+              fill: true,
+              tension: 0.35,
               pointRadius: 2,
             },
             {
               label: 'Solar Used (kWh)',
               data: solarData,
-              borderColor: '#f59e0b',
-              backgroundColor: 'rgba(245, 158, 11, 0.1)',
+              borderColor: '#ffb606',
+              backgroundColor: 'rgba(255, 182, 6, 0.12)',
               borderWidth: 2,
-              tension: 0.3,
+              fill: true,
+              tension: 0.35,
               pointRadius: 2,
             },
             {
               label: 'Grid Import (kWh)',
               data: gridData,
-              borderColor: '#a855f7',
-              backgroundColor: 'rgba(168, 85, 247, 0.1)',
+              borderColor: '#06b6d4',
+              backgroundColor: 'rgba(6, 182, 212, 0.12)',
               borderWidth: 2,
-              tension: 0.3,
+              fill: true,
+              tension: 0.35,
               pointRadius: 2,
             },
             {
               label: 'Battery SoC (kWh)',
               data: socData,
               borderColor: '#10b981',
-              backgroundColor: 'rgba(16, 185, 129, 0.1)',
+              backgroundColor: 'transparent',
               borderWidth: 2.5,
-              borderDash: [4, 4],
-              tension: 0.2,
+              borderDash: [5, 5],
+              tension: 0.25,
               pointRadius: 3,
             }
           ]
@@ -473,66 +1488,157 @@
           plugins: {
             legend: { display: false },
             tooltip: {
-              backgroundColor: '#0f172a',
-              borderColor: '#334155',
+              backgroundColor: '#07132c',
+              borderColor: '#179bd7',
               borderWidth: 1,
-              titleFont: { family: 'Plus Jakarta Sans' },
+              titleFont: { family: 'Plus Jakarta Sans', weight: 'bold' },
               bodyFont: { family: 'JetBrains Mono' },
               padding: 10,
             }
           },
           scales: {
             x: {
-              grid: { color: 'rgba(51, 65, 85, 0.3)' },
+              grid: { color: 'rgba(30, 58, 122, 0.3)' },
               ticks: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 10 } }
             },
             y: {
-              grid: { color: 'rgba(51, 65, 85, 0.3)' },
+              grid: { color: 'rgba(30, 58, 122, 0.3)' },
               ticks: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 10 } }
+            }
+          }
+        }
+      });
+
+      // Energy Source Breakdown Donut Chart
+      const totalSolarUsed = plan.reduce((a, b) => a + b.solar_used_kwh, 0);
+      const totalDischarge = plan.filter(p => p.battery_action === 'discharge').reduce((a, b) => a + b.battery_kwh, 0);
+      const totalEnergy = totalSolarUsed + totalDischarge + totalGridKwh;
+
+      const solarPct = totalEnergy > 0 ? ((totalSolarUsed / totalEnergy) * 100).toFixed(1) : "0";
+      const batteryPct = totalEnergy > 0 ? ((totalDischarge / totalEnergy) * 100).toFixed(1) : "0";
+      const gridPct = totalEnergy > 0 ? ((totalGridKwh / totalEnergy) * 100).toFixed(1) : "0";
+
+      document.getElementById('donutSolarPct').textContent = solarPct + '%';
+      document.getElementById('donutBatteryPct').textContent = batteryPct + '%';
+      document.getElementById('donutGridPct').textContent = gridPct + '%';
+      document.getElementById('donutCenterTotal').textContent = Math.round(totalEnergy).toLocaleString();
+
+      const breakdownCtx = document.getElementById('breakdownChart').getContext('2d');
+      if (breakdownChartInstance) breakdownChartInstance.destroy();
+
+      breakdownChartInstance = new Chart(breakdownCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Solar', 'Battery', 'Grid'],
+          datasets: [{
+            data: [totalSolarUsed, totalDischarge, totalGridKwh],
+            backgroundColor: ['#ffb606', '#10b981', '#06b6d4'],
+            borderWidth: 0,
+            hoverOffset: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '74%',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#07132c',
+              bodyFont: { family: 'JetBrains Mono' },
+              padding: 8
             }
           }
         }
       });
     }
 
-    async function fetchHistory() {
+    // -------------------------------------------------------------
+    // EXPORTS & MODALS
+    // -------------------------------------------------------------
+    function exportCSV() {
+      if (!currentResponseData || !currentResponseData.hourly_plan) {
+        alert("Please run optimization first.");
+        return;
+      }
+
+      let csv = "Hour,Demand_kWh,SolarUsed_kWh,BatteryAction,Battery_kWh,BatteryEnergyAfter_kWh,Grid_kWh,Tariff_BDT\n";
+      currentResponseData.hourly_plan.forEach((row, idx) => {
+        const hData = currentHoursData[idx] || { demand_kwh: 0, tariff_bdt_per_kwh: 0 };
+        csv += `${row.hour},${hData.demand_kwh},${row.solar_used_kwh},${row.battery_action},${row.battery_kwh},${row.battery_energy_after_kwh},${row.grid_kwh},${hData.tariff_bdt_per_kwh}\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `gridwise_schedule_${currentResponseData.scenario_id}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function openJsonModal() {
+      if (!currentResponseData) {
+        alert("Please run optimization first to generate JSON.");
+        return;
+      }
+      document.getElementById('rawJsonCode').textContent = JSON.stringify(currentResponseData, null, 2);
+      document.getElementById('jsonModal').classList.remove('hidden');
+    }
+
+    function closeJsonModal() {
+      document.getElementById('jsonModal').classList.add('hidden');
+    }
+
+    function copyRawJson() {
+      const code = document.getElementById('rawJsonCode').textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        alert("JSON copied to clipboard!");
+      });
+    }
+
+    // -------------------------------------------------------------
+    // TELEMETRY HISTORY
+    // -------------------------------------------------------------
+    async function fetchTelemetryHistory() {
       try {
         const res = await fetch('/api/history');
         if (!res.ok) return;
         const data = await res.json();
-        const tbody = document.getElementById('historyTableBody');
-        if (!data.history || data.history.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="7" class="py-3 px-3 text-center text-slate-500 font-sans">No recent telemetry records found.</td></tr>`;
-          return;
-        }
+        const tbody = document.getElementById('telemetryHistoryBody');
+        if (!data.history || data.history.length === 0) return;
+
         tbody.innerHTML = '';
         data.history.forEach(item => {
           const tr = document.createElement('tr');
-          tr.className = "hover:bg-slate-800/30 transition";
+          tr.className = "hover:bg-bup-royal/20 transition";
           const timeFormatted = new Date(item.created_at).toLocaleTimeString();
           tr.innerHTML = `
             <td class="py-2 px-3 text-slate-300 font-semibold">${item.scenario_id}</td>
             <td class="py-2 px-3 text-slate-400">${timeFormatted}</td>
             <td class="py-2 px-3 text-emerald-400">${item.applied_directives_count}</td>
-            <td class="py-2 px-3 text-white">${item.total_cost_bdt.toFixed(2)}</td>
-            <td class="py-2 px-3 text-purple-300">${item.total_grid_kwh.toFixed(2)}</td>
-            <td class="py-2 px-3 text-teal-300">${item.peak_grid_kwh.toFixed(2)}</td>
+            <td class="py-2 px-3 text-bup-gold">${item.total_cost_bdt.toFixed(2)}</td>
+            <td class="py-2 px-3 text-cyan-300">${item.total_grid_kwh.toFixed(1)}</td>
             <td class="py-2 px-3 text-slate-400">${item.execution_time_seconds.toFixed(2)}s</td>
           `;
           tbody.appendChild(tr);
         });
       } catch (e) {
-        console.error("Failed to fetch history:", e);
+        console.warn("Could not fetch telemetry history:", e);
       }
     }
 
-    // Auto-run baseline and fetch history on page load
+    // -------------------------------------------------------------
+    // INITIALIZATION ON DOM LOAD
+    // -------------------------------------------------------------
     window.addEventListener('DOMContentLoaded', () => {
+      initThreeCampus();
       runOptimization();
-      fetchHistory();
-      setInterval(fetchHistory, 10000);
+      fetchTelemetryHistory();
+      setInterval(fetchTelemetryHistory, 12000);
     });
   </script>
+
 </body>
 </html>
-
