@@ -326,9 +326,8 @@ docker push ghcr.io/<YOUR_GITHUB_USERNAME>/gridwise:latest
 ```
 
 **Submitted Fallback Image Reference**:
-```
-docker pull <YOUR_REGISTRY_IMAGE_TAG_OR_DIGEST>
-```
+
+docker pull zawadrafid/gridwise:latest
 
 ---
 
