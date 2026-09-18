@@ -40,6 +40,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from app.database import get_recent_history, record_optimization_run
+
+
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    """Adds standard security headers to all HTTP responses."""
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    return response
+
+
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
@@ -77,6 +90,13 @@ async def serve_dashboard():
     if os.path.exists(html_path):
         return FileResponse(html_path)
     return HTMLResponse("<h1>GridWise API Online</h1><p>Visit /docs for API documentation.</p>")
+
+
+@app.get("/api/history")
+async def get_history():
+    """Returns recent optimization history."""
+    return {"history": get_recent_history()}
+
 
 
 
@@ -168,7 +188,22 @@ async def optimize_energy(request: OptimizeRequest):
         )
         elapsed = time.perf_counter() - t_start
         logger.info(f"Scenario '{scenario_id}' successfully optimized in {elapsed:.2f}s")
+
+        applied_count = sum(1 for d in response.directive_interpretation if d.applies and d.directive_type != "no_op")
+        asyncio.create_task(
+            record_optimization_run(
+                scenario_id=scenario_id,
+                operator_notes=request.operator_notes,
+                total_grid_kwh=response.total_grid_kwh,
+                total_cost_bdt=response.total_cost_bdt,
+                peak_grid_kwh=response.peak_grid_kwh,
+                applied_directives_count=applied_count,
+                execution_time_seconds=elapsed,
+            )
+        )
+
         return response
+
 
     except asyncio.TimeoutError:
         elapsed = time.perf_counter() - t_start

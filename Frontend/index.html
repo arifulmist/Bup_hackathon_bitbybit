@@ -216,6 +216,36 @@
             </tr>
           </tbody>
         </table>
+    <!-- Recent Optimization History (Telemetry & Supabase sync) -->
+    <div class="bg-[#111827]/70 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="font-semibold text-base text-white flex items-center space-x-2">
+          <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>Optimization Telemetry & Run History</span>
+        </h3>
+        <span class="text-xs text-slate-400">Live Telemetry Cache</span>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-900 text-slate-400 uppercase tracking-wider border-b border-slate-800">
+            <tr>
+              <th class="py-2.5 px-3">Scenario ID</th>
+              <th class="py-2.5 px-3">Timestamp (UTC)</th>
+              <th class="py-2.5 px-3">Directives</th>
+              <th class="py-2.5 px-3">Total Cost (BDT)</th>
+              <th class="py-2.5 px-3">Total Grid (kWh)</th>
+              <th class="py-2.5 px-3">Peak Grid (kWh)</th>
+              <th class="py-2.5 px-3">Latency (s)</th>
+            </tr>
+          </thead>
+          <tbody id="historyTableBody" class="divide-y divide-slate-800/60 font-mono">
+            <tr>
+              <td colspan="7" class="py-3 px-3 text-center text-slate-500 font-sans">No recent telemetry records found.</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -465,10 +495,44 @@
       });
     }
 
-    // Auto-run baseline on page load
+    async function fetchHistory() {
+      try {
+        const res = await fetch('/api/history');
+        if (!res.ok) return;
+        const data = await res.json();
+        const tbody = document.getElementById('historyTableBody');
+        if (!data.history || data.history.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" class="py-3 px-3 text-center text-slate-500 font-sans">No recent telemetry records found.</td></tr>`;
+          return;
+        }
+        tbody.innerHTML = '';
+        data.history.forEach(item => {
+          const tr = document.createElement('tr');
+          tr.className = "hover:bg-slate-800/30 transition";
+          const timeFormatted = new Date(item.created_at).toLocaleTimeString();
+          tr.innerHTML = `
+            <td class="py-2 px-3 text-slate-300 font-semibold">${item.scenario_id}</td>
+            <td class="py-2 px-3 text-slate-400">${timeFormatted}</td>
+            <td class="py-2 px-3 text-emerald-400">${item.applied_directives_count}</td>
+            <td class="py-2 px-3 text-white">${item.total_cost_bdt.toFixed(2)}</td>
+            <td class="py-2 px-3 text-purple-300">${item.total_grid_kwh.toFixed(2)}</td>
+            <td class="py-2 px-3 text-teal-300">${item.peak_grid_kwh.toFixed(2)}</td>
+            <td class="py-2 px-3 text-slate-400">${item.execution_time_seconds.toFixed(2)}s</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (e) {
+        console.error("Failed to fetch history:", e);
+      }
+    }
+
+    // Auto-run baseline and fetch history on page load
     window.addEventListener('DOMContentLoaded', () => {
       runOptimization();
+      fetchHistory();
+      setInterval(fetchHistory, 10000);
     });
   </script>
 </body>
 </html>
+
