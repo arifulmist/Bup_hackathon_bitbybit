@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GridWise — Smart Campus Energy Optimizer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    code, pre, .mono { font-family: 'JetBrains Mono', monospace; }
+  </style>
+</head>
+<body class="bg-[#0b0f19] text-slate-100 min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-black">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800/80 bg-[#0d1322]/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+          <svg class="w-5 h-5 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg tracking-tight bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">GridWise</h1>
+          <p class="text-xs text-slate-400 -mt-1">Smart Campus Energy Optimizer • BUP CSE Fest 2026</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-2 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 rounded-full">
+          <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-xs font-medium text-emerald-400">Core Engine Online</span>
+        </div>
+        <a href="/docs" target="_blank" class="text-xs text-slate-400 hover:text-white transition px-3 py-1.5 rounded-lg border border-slate-800 hover:border-slate-700 bg-slate-900/60">
+          API Specs
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-6 py-8 space-y-8">
+
+    <!-- Top Grid: Input Controls & Operator Directives -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- Left: Operator Directives Input -->
+      <div class="lg:col-span-6 bg-[#111827]/70 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
+        <div class="flex items-center justify-between">
+          <h2 class="font-semibold text-base flex items-center space-x-2 text-white">
+            <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+            </svg>
+            <span>Operator Notes (Natural Language)</span>
+          </h2>
+          <span class="text-xs bg-slate-800 text-slate-400 px-2.5 py-0.5 rounded-md">1 to 3 notes</span>
+        </div>
+
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Input plain English operator directives. The LLM interpreter parses hour windows, solar reduction fractions, and battery bounds, verified by deterministic guardrails.
+        </p>
+
+        <div class="space-y-3" id="notesContainer">
+          <div class="flex items-center space-x-2">
+            <input type="text" class="operator-note-input w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition" 
+              value="Heavy cloud cover expected between 1 PM and 3 PM; solar PV output will drop by 80%." placeholder="Note 1 (e.g. cloud cover, reserve demand, no-charge window)">
+          </div>
+          <div class="flex items-center space-x-2">
+            <input type="text" class="operator-note-input w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition" 
+              value="Keep at least 35 kWh reserve in the battery between 6 PM and 9 PM for the evening auditorium event." placeholder="Note 2 (optional)">
+          </div>
+          <div class="flex items-center space-x-2">
+            <input type="text" class="operator-note-input w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition" 
+              value="Hold battery discharging between 7 AM and 9 AM." placeholder="Note 3 (optional)">
+          </div>
+        </div>
+
+        <!-- Presets and Run Button -->
+        <div class="pt-2 flex items-center justify-between">
+          <div class="flex space-x-2">
+            <button onclick="loadPreset(1)" class="text-xs px-2.5 py-1 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-lg transition border border-slate-700/50">Preset: Weather & Reserve</button>
+            <button onclick="loadPreset(2)" class="text-xs px-2.5 py-1 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-lg transition border border-slate-700/50">Preset: Grid Capping</button>
+          </div>
+          <button id="btnOptimize" onclick="runOptimization()" class="px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-black font-semibold text-sm rounded-xl shadow-lg shadow-emerald-500/25 transition transform active:scale-95 flex items-center space-x-2">
+            <svg id="spinner" class="animate-spin -ml-1 mr-2 h-4 w-4 text-black hidden" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+            </svg>
+            <span id="btnText">Solve Optimal Schedule</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Right: Battery & Scenario Configuration -->
+      <div class="lg:col-span-6 bg-[#111827]/70 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
+        <h2 class="font-semibold text-base flex items-center space-x-2 text-white">
+          <svg class="w-4 h-4 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+          </svg>
+          <span>Battery Storage Parameters</span>
+        </h2>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs">
+          <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800/80">
+            <span class="text-slate-400 block mb-1">Capacity</span>
+            <span class="text-base font-semibold text-white">100.0 <span class="text-xs text-slate-500 font-normal">kWh</span></span>
+          </div>
+          <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800/80">
+            <span class="text-slate-400 block mb-1">Initial Energy (E₀)</span>
+            <span class="text-base font-semibold text-white">50.0 <span class="text-xs text-slate-500 font-normal">kWh</span></span>
+          </div>
+          <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800/80">
+            <span class="text-slate-400 block mb-1">Base Min Reserve</span>
+            <span class="text-base font-semibold text-white">10.0 <span class="text-xs text-slate-500 font-normal">kWh</span></span>
+          </div>
+          <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800/80">
+            <span class="text-slate-400 block mb-1">Max Charge Rate</span>
+            <span class="text-base font-semibold text-white">25.0 <span class="text-xs text-slate-500 font-normal">kWh/h</span></span>
+          </div>
+          <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800/80">
+            <span class="text-slate-400 block mb-1">Max Discharge Rate</span>
+            <span class="text-base font-semibold text-white">25.0 <span class="text-xs text-slate-500 font-normal">kWh/h</span></span>
+          </div>
+          <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800/80">
+            <span class="text-slate-400 block mb-1">End-of-Day Target</span>
+            <span class="text-base font-semibold text-emerald-400">50.0 <span class="text-xs text-slate-500 font-normal">kWh (E₂₃)</span></span>
+          </div>
+        </div>
+
+        <!-- Executive Summary Banner -->
+        <div id="summaryBanner" class="p-4 bg-slate-900/90 border border-slate-800 rounded-xl text-xs text-slate-300 leading-relaxed hidden">
+          <span class="font-semibold text-emerald-400 block mb-1">Optimization Result:</span>
+          <span id="summaryText">Ready. Click 'Solve Optimal Schedule' to optimize.</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- KPIs Row -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="kpiRow">
+      <div class="bg-[#111827]/70 border border-slate-800 rounded-2xl p-5 shadow-lg">
+        <span class="text-xs font-medium text-slate-400 uppercase tracking-wider block">Total Electricity Cost</span>
+        <span class="text-2xl font-bold text-white mt-1 block" id="kpiCost">— <span class="text-sm font-normal text-slate-400">BDT</span></span>
+        <span class="text-xs text-emerald-400 mt-1 block">Globally Minimized (LP)</span>
+      </div>
+      <div class="bg-[#111827]/70 border border-slate-800 rounded-2xl p-5 shadow-lg">
+        <span class="text-xs font-medium text-slate-400 uppercase tracking-wider block">Total Grid Import</span>
+        <span class="text-2xl font-bold text-white mt-1 block" id="kpiGrid">— <span class="text-sm font-normal text-slate-400">kWh</span></span>
+        <span class="text-xs text-slate-400 mt-1 block">24-hour total consumption</span>
+      </div>
+      <div class="bg-[#111827]/70 border border-slate-800 rounded-2xl p-5 shadow-lg">
+        <span class="text-xs font-medium text-slate-400 uppercase tracking-wider block">Peak Grid Demand</span>
+        <span class="text-2xl font-bold text-white mt-1 block" id="kpiPeak">— <span class="text-sm font-normal text-slate-400">kWh</span></span>
+        <span class="text-xs text-teal-400 mt-1 block">Peak hourly import</span>
+      </div>
+      <div class="bg-[#111827]/70 border border-slate-800 rounded-2xl p-5 shadow-lg">
+        <span class="text-xs font-medium text-slate-400 uppercase tracking-wider block">Directives Applied</span>
+        <span class="text-2xl font-bold text-white mt-1 block" id="kpiDirectives">—</span>
+        <span class="text-xs text-slate-400 mt-1 block">Guardrail sanitized & satisfied</span>
+      </div>
+    </div>
+
+    <!-- Middle: Directive Interpretation Cards -->
+    <div class="bg-[#111827]/70 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+      <h3 class="font-semibold text-base text-white flex items-center space-x-2">
+        <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>LLM Directive Interpretations & Adjustments</span>
+      </h3>
+      <div id="directivesList" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="p-4 bg-slate-900/80 border border-slate-800 rounded-xl text-xs text-slate-400">
+          No directives processed yet.
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart: Energy Dispatch Curves -->
+    <div class="bg-[#111827]/70 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="font-semibold text-base text-white">24-Hour Energy Dispatch Schedule</h3>
+        <div class="flex items-center space-x-3 text-xs">
+          <span class="flex items-center space-x-1.5"><span class="h-2.5 w-2.5 rounded-full bg-blue-500"></span><span class="text-slate-300">Demand</span></span>
+          <span class="flex items-center space-x-1.5"><span class="h-2.5 w-2.5 rounded-full bg-amber-400"></span><span class="text-slate-300">Solar Used</span></span>
+          <span class="flex items-center space-x-1.5"><span class="h-2.5 w-2.5 rounded-full bg-purple-500"></span><span class="text-slate-300">Grid Import</span></span>
+          <span class="flex items-center space-x-1.5"><span class="h-2.5 w-2.5 rounded-full bg-emerald-400"></span><span class="text-slate-300">Battery SoC</span></span>
+        </div>
+      </div>
+      <div class="h-72 w-full">
+        <canvas id="dispatchChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Hourly Plan Data Table -->
+    <div class="bg-[#111827]/70 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+      <h3 class="font-semibold text-base text-white">Hourly Plan Detail (Replay Invariants Validated)</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-900 text-slate-400 uppercase tracking-wider border-b border-slate-800">
+            <tr>
+              <th class="py-2.5 px-3">Hour</th>
+              <th class="py-2.5 px-3">Grid Import (kWh)</th>
+              <th class="py-2.5 px-3">Solar Used (kWh)</th>
+              <th class="py-2.5 px-3">Battery Action</th>
+              <th class="py-2.5 px-3">Battery Energy (kWh)</th>
+              <th class="py-2.5 px-3">State of Charge (kWh)</th>
+            </tr>
+          </thead>
+          <tbody id="planTableBody" class="divide-y divide-slate-800/60 font-mono">
+            <tr>
+              <td colspan="6" class="py-4 px-3 text-center text-slate-500 font-sans">Click 'Solve Optimal Schedule' to view hourly breakdown.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="border-t border-slate-800/80 py-6 text-center text-xs text-slate-500 bg-[#0d1322]">
+    GridWise Optimization Service • Powered by PuLP CBC Linear Programming & Generative LLM Guardrails
+  </footer>
+
+  <script>
+    let chartInstance = null;
+
+    function loadPreset(num) {
+      const inputs = document.querySelectorAll('.operator-note-input');
+      if (num === 1) {
+        inputs[0].value = "Heavy cloud cover expected between 1 PM and 3 PM; solar PV output will drop by 80%.";
+        inputs[1].value = "Keep at least 35 kWh reserve in the battery between 6 PM and 9 PM for the evening auditorium event.";
+        inputs[2].value = "Hold battery discharging between 7 AM and 9 AM.";
+      } else {
+        inputs[0].value = "Grid import capped at 20 kWh from 18:00 to 22:00 due to contract demand limits.";
+        inputs[1].value = "Do not charge the battery between 12:00 and 15:00.";
+        inputs[2].value = "Cafeteria will be closed for cleaning at 5 PM.";
+      }
+    }
+
+    async function runOptimization() {
+      const btn = document.getElementById('btnOptimize');
+      const spinner = document.getElementById('spinner');
+      const btnText = document.getElementById('btnText');
+
+      const inputs = document.querySelectorAll('.operator-note-input');
+      const notes = Array.from(inputs).map(i => i.value.trim()).filter(v => v.length > 0);
+
+      if (notes.length === 0) {
+        alert("Please enter at least 1 operator note.");
+        return;
+      }
+
+      btn.disabled = true;
+      spinner.classList.remove('hidden');
+      btnText.textContent = "Solving LP...";
+
+      // Standard baseline 24-hour scenario data
+      const hoursData = [];
+      for (let h = 0; h < 24; h++) {
+        let demand = (h >= 10 && h <= 20) ? 35.0 : 18.0;
+        let solar = (h >= 8 && h <= 16) ? Math.max(0, 30.0 - Math.abs(h - 12) * 4.0) : 0.0;
+        let tariff = (h >= 17 && h <= 22) ? 12.0 : ((h <= 6 || h === 23) ? 6.0 : 8.0);
+        hoursData.push({
+          hour: h,
+          demand_kwh: demand,
+          solar_kwh: solar,
+          tariff_bdt_per_kwh: tariff
+        });
+      }
+
+      const payload = {
+        scenario_id: "dashboard_run_" + Date.now().toString().slice(-4),
+        operator_notes: notes,
+        hours: hoursData,
+        battery: {
+          capacity_kwh: 100.0,
+          initial_energy_kwh: 50.0,
+          minimum_energy_kwh: 10.0,
+          max_charge_kwh_per_hour: 25.0,
+          max_discharge_kwh_per_hour: 25.0
+        }
+      };
+
+      try {
+        const res = await fetch('/optimize-energy', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          alert("Error " + res.status + ": " + (err.detail || err.message || "Failed to optimize"));
+          return;
+        }
+
+        const data = await res.json();
+        renderResults(data, hoursData);
+
+      } catch (e) {
+        alert("Connection error: " + e.message);
+      } finally {
+        btn.disabled = false;
+        spinner.classList.add('hidden');
+        btnText.textContent = "Solve Optimal Schedule";
+      }
+    }
+
+    function renderResults(data, hoursData) {
+      // KPIs
+      document.getElementById('kpiCost').innerHTML = data.total_cost_bdt.toFixed(2) + ' <span class="text-sm font-normal text-slate-400">BDT</span>';
+      document.getElementById('kpiGrid').innerHTML = data.total_grid_kwh.toFixed(2) + ' <span class="text-sm font-normal text-slate-400">kWh</span>';
+      document.getElementById('kpiPeak').innerHTML = data.peak_grid_kwh.toFixed(2) + ' <span class="text-sm font-normal text-slate-400">kWh</span>';
+      
+      const activeCount = data.directive_interpretation.filter(d => d.applies && d.directive_type !== 'no_op').length;
+      document.getElementById('kpiDirectives').textContent = activeCount + ' / ' + data.directive_interpretation.length;
+
+      // Summary
+      const summaryBanner = document.getElementById('summaryBanner');
+      summaryBanner.classList.remove('hidden');
+      document.getElementById('summaryText').textContent = data.plan_summary;
+
+      // Directives
+      const container = document.getElementById('directivesList');
+      container.innerHTML = '';
+      data.directive_interpretation.forEach(d => {
+        const card = document.createElement('div');
+        const badgeColor = d.directive_type === 'no_op' 
+          ? 'bg-slate-800 text-slate-400 border-slate-700' 
+          : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
+        
+        let detailsHtml = '';
+        if (d.structured_adjustment) {
+          detailsHtml = `<div class="mt-2 font-mono text-[11px] bg-black/40 p-2 rounded border border-slate-800 text-slate-300">
+            ${JSON.stringify(d.structured_adjustment, null, 1)}
+          </div>`;
+        }
+
+        card.className = "p-4 bg-slate-900/80 border border-slate-800 rounded-xl space-y-2";
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="font-mono text-xs text-slate-500">Note #${d.note_index}</span>
+            <span class="text-[11px] font-semibold px-2 py-0.5 rounded border ${badgeColor}">${d.directive_type}</span>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed">${d.explanation}</p>
+          ${detailsHtml}
+        `;
+        container.appendChild(card);
+      });
+
+      // Table
+      const tbody = document.getElementById('planTableBody');
+      tbody.innerHTML = '';
+      data.hourly_plan.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-800/30 transition";
+        let actionBadge = `<span class="text-slate-500">idle</span>`;
+        if (row.battery_action === 'charge') {
+          actionBadge = `<span class="text-emerald-400 font-semibold">▲ charge</span>`;
+        } else if (row.battery_action === 'discharge') {
+          actionBadge = `<span class="text-amber-400 font-semibold">▼ discharge</span>`;
+        }
+
+        tr.innerHTML = `
+          <td class="py-2.5 px-3 font-semibold text-slate-400">${String(row.hour).padStart(2, '0')}:00</td>
+          <td class="py-2.5 px-3 text-purple-300">${row.grid_kwh.toFixed(2)}</td>
+          <td class="py-2.5 px-3 text-amber-300">${row.solar_used_kwh.toFixed(2)}</td>
+          <td class="py-2.5 px-3">${actionBadge}</td>
+          <td class="py-2.5 px-3 text-slate-300">${row.battery_kwh.toFixed(2)}</td>
+          <td class="py-2.5 px-3 text-emerald-300 font-semibold">${row.battery_energy_after_kwh.toFixed(2)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // Chart
+      renderChart(data.hourly_plan, hoursData);
+    }
+
+    function renderChart(plan, hoursData) {
+      const labels = plan.map(p => `${p.hour}:00`);
+      const demandData = hoursData.map(h => h.demand_kwh);
+      const solarData = plan.map(p => p.solar_used_kwh);
+      const gridData = plan.map(p => p.grid_kwh);
+      const socData = plan.map(p => p.battery_energy_after_kwh);
+
+      const ctx = document.getElementById('dispatchChart').getContext('2d');
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+
+      chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Demand (kWh)',
+              data: demandData,
+              borderColor: '#3b82f6',
+              backgroundColor: 'rgba(59, 130, 246, 0.1)',
+              borderWidth: 2,
+              tension: 0.3,
+              pointRadius: 2,
+            },
+            {
+              label: 'Solar Used (kWh)',
+              data: solarData,
+              borderColor: '#f59e0b',
+              backgroundColor: 'rgba(245, 158, 11, 0.1)',
+              borderWidth: 2,
+              tension: 0.3,
+              pointRadius: 2,
+            },
+            {
+              label: 'Grid Import (kWh)',
+              data: gridData,
+              borderColor: '#a855f7',
+              backgroundColor: 'rgba(168, 85, 247, 0.1)',
+              borderWidth: 2,
+              tension: 0.3,
+              pointRadius: 2,
+            },
+            {
+              label: 'Battery SoC (kWh)',
+              data: socData,
+              borderColor: '#10b981',
+              backgroundColor: 'rgba(16, 185, 129, 0.1)',
+              borderWidth: 2.5,
+              borderDash: [4, 4],
+              tension: 0.2,
+              pointRadius: 3,
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#0f172a',
+              borderColor: '#334155',
+              borderWidth: 1,
+              titleFont: { family: 'Plus Jakarta Sans' },
+              bodyFont: { family: 'JetBrains Mono' },
+              padding: 10,
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(51, 65, 85, 0.3)' },
+              ticks: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 10 } }
+            },
+            y: {
+              grid: { color: 'rgba(51, 65, 85, 0.3)' },
+              ticks: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 10 } }
+            }
+          }
+        }
+      });
+    }
+
+    // Auto-run baseline on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      runOptimization();
+    });
+  </script>
+</body>
+</html>
