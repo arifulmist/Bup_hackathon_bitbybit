@@ -83,10 +83,6 @@
       stroke-dasharray: 6 6;
       animation: pulseDash 1.2s linear infinite;
     }
-    .pulse-flow-reverse {
-      stroke-dasharray: 6 6;
-      animation: pulseDash 1.2s linear infinite reverse;
-    }
 
     /* Custom scrollbars */
     ::-webkit-scrollbar {
@@ -103,17 +99,6 @@
     ::-webkit-scrollbar-thumb:hover {
       background: #179bd7;
     }
-
-    /* Glow utilities */
-    .glow-gold {
-      box-shadow: 0 0 20px rgba(255, 182, 6, 0.25);
-    }
-    .glow-blue {
-      box-shadow: 0 0 20px rgba(23, 155, 215, 0.3);
-    }
-    .glow-green {
-      box-shadow: 0 0 20px rgba(16, 185, 129, 0.25);
-    }
   </style>
 </head>
 
@@ -121,7 +106,6 @@
 
   <!-- TOP BRANDING & STATUS HEADER -->
   <header class="sticky top-0 z-50 border-b border-bup-border/60 bg-[#07132c]/90 backdrop-blur-md">
-    <!-- Top University Accent Bar (BUP Sky Blue) -->
     <div class="h-1 bg-gradient-to-r from-bup-royal via-bup-blue to-bup-green w-full"></div>
     
     <div class="max-w-[1680px] mx-auto px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-4">
@@ -175,7 +159,7 @@
               <span class="h-2 w-2 rounded-full bg-emerald-400 animate-ping"></span>
               <span class="font-bold text-emerald-300 text-[11px]">Operator Online</span>
             </div>
-            <div class="text-[9px] text-slate-400">Simulation Ready</div>
+            <div class="text-[9px] text-slate-400">All 6 Directives Ready</div>
           </div>
         </div>
 
@@ -202,7 +186,7 @@
   <!-- MAIN APPLICATION LAYOUT -->
   <div class="flex-1 max-w-[1680px] w-full mx-auto px-4 sm:px-6 py-6 flex gap-6">
 
-    <!-- LEFT SIDEBAR NAVIGATION (From Reference Image 1) -->
+    <!-- LEFT SIDEBAR NAVIGATION -->
     <aside class="hidden xl:flex flex-col w-64 shrink-0 space-y-6">
       <div class="bup-glass rounded-2xl p-4 flex flex-col justify-between h-full space-y-6">
         
@@ -215,22 +199,30 @@
             <span>Dashboard</span>
           </a>
 
+          <a href="#directivesGallerySection" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white text-xs transition">
+            <div class="flex items-center space-x-3">
+              <svg class="w-4 h-4 text-bup-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+              <span>Supported Directives</span>
+            </div>
+            <span class="bg-bup-blue text-white font-bold text-[10px] px-2 py-0.5 rounded-full">6 TYPES</span>
+          </a>
+
           <a href="#threeCampusSection" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white text-xs transition">
-            <svg class="w-4 h-4 text-bup-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+            <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"/></svg>
             <span>3D Digital Twin</span>
           </a>
 
           <a href="#energyFlowSection" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white text-xs transition">
-            <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <svg class="w-4 h-4 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
             <span>Energy Flow</span>
           </a>
 
           <a href="#operatorNotesSection" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white text-xs transition">
             <div class="flex items-center space-x-3">
               <svg class="w-4 h-4 text-bup-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
-              <span>Operator Notes</span>
+              <span>Operator Prompt</span>
             </div>
-            <span class="bg-rose-500 text-white font-bold text-[10px] px-1.5 py-0.5 rounded-full" id="notesBadge">3</span>
+            <span class="bg-rose-500 text-white font-bold text-[10px] px-1.5 py-0.5 rounded-full" id="activeNotesBadge">3</span>
           </a>
 
           <a href="#schedulesSection" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white text-xs transition">
@@ -241,11 +233,6 @@
           <a href="#validationSection" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white text-xs transition">
             <svg class="w-4 h-4 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             <span>Verification Checklist</span>
-          </a>
-
-          <a href="#telemetrySection" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white text-xs transition">
-            <svg class="w-4 h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-            <span>Telemetry History</span>
           </a>
         </div>
 
@@ -289,7 +276,7 @@
     <!-- RIGHT MAIN CONTENT AREA -->
     <main class="flex-1 min-w-0 space-y-6">
 
-      <!-- SECTION 1: 5 HIGH-LEVEL KPI METRICS (From Reference Image 1) -->
+      <!-- SECTION 1: 5 HIGH-LEVEL KPI METRICS -->
       <section id="dashboardSection" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         
         <!-- Total Demand -->
@@ -382,7 +369,173 @@
 
       </section>
 
-      <!-- SECTION 2: 3D DIGITAL TWIN & INTERACTIVE ENERGY FLOW (Requested 3D & Colorful Flow Diagram) -->
+      <!-- SECTION 2: ALL 6 SUPPORTED DIRECTIVE TYPES EXPLORER (Challenge Spec Section 4.1) -->
+      <section id="directivesGallerySection" class="bup-glass rounded-2xl p-5 space-y-4">
+        
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-bup-border/60 pb-3">
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="px-2.5 py-0.5 rounded-full bg-bup-blue/20 text-bup-blue border border-bup-blue/40 text-xs font-bold font-mono">Section 4.1 Specification</span>
+              <h2 class="font-bold text-base text-white">All 6 Supported Directive Types</h2>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">
+              Click any directive card below to immediately test its natural language expression in the optimizer.
+            </p>
+          </div>
+          <div class="flex items-center space-x-2 text-xs">
+            <span class="text-slate-400">Quick Test:</span>
+            <button onclick="applyAllDirectivesBundle()" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-bup-blue to-emerald-500 text-black font-bold text-xs hover:opacity-90 transition shadow-md">
+              ⚡ Test Multi-Directive Scenario
+            </button>
+          </div>
+        </div>
+
+        <!-- 6 Canonical Directive Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+          
+          <!-- Directive 1: solar_reduction -->
+          <div class="p-4 rounded-xl bg-[#081329] border border-bup-border hover:border-bup-gold/70 transition space-y-2.5 flex flex-col justify-between group">
+            <div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <span class="text-lg">☀️</span>
+                  <span class="font-mono text-xs font-bold text-bup-gold">solar_reduction</span>
+                </div>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/10 text-bup-gold border border-amber-500/30">Active</span>
+              </div>
+              <p class="text-xs text-slate-300 mt-1.5 font-medium">Reduce usable solar during specific hours.</p>
+              <div class="mt-2 text-[10px] font-mono text-slate-400 bg-black/40 p-2 rounded border border-white/5">
+                <span class="text-slate-500">Schema: </span>{"hours":[...], "factor": number}
+              </div>
+              <div class="mt-1.5 text-[11px] text-slate-400 italic">
+                "Solar output will drop to about 20% from 1 PM to 3 PM."
+              </div>
+            </div>
+            <button onclick="injectDirective(0)" class="w-full mt-2 py-1.5 px-2.5 rounded-lg bg-bup-royal/40 hover:bg-bup-royal text-bup-blue hover:text-white border border-bup-blue/30 text-[11px] font-semibold transition flex items-center justify-center space-x-1">
+              <span>⚡ Load into Note #0</span>
+            </button>
+          </div>
+
+          <!-- Directive 2: minimum_battery_reserve -->
+          <div class="p-4 rounded-xl bg-[#081329] border border-bup-border hover:border-emerald-500/70 transition space-y-2.5 flex flex-col justify-between group">
+            <div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <span class="text-lg">🔋</span>
+                  <span class="font-mono text-xs font-bold text-emerald-400">minimum_battery_reserve</span>
+                </div>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Active</span>
+              </div>
+              <p class="text-xs text-slate-300 mt-1.5 font-medium">Keep battery energy at or above a required level.</p>
+              <div class="mt-2 text-[10px] font-mono text-slate-400 bg-black/40 p-2 rounded border border-white/5">
+                <span class="text-slate-500">Schema: </span>{"hours":[...], "minimum_energy_kwh": number}
+              </div>
+              <div class="mt-1.5 text-[11px] text-slate-400 italic">
+                "Keep at least 35 kWh in reserve from 6 PM until 9 PM."
+              </div>
+            </div>
+            <button onclick="injectDirective(1)" class="w-full mt-2 py-1.5 px-2.5 rounded-lg bg-bup-royal/40 hover:bg-bup-royal text-emerald-400 hover:text-white border border-emerald-500/30 text-[11px] font-semibold transition flex items-center justify-center space-x-1">
+              <span>⚡ Load into Note #1</span>
+            </button>
+          </div>
+
+          <!-- Directive 3: no_charge_window -->
+          <div class="p-4 rounded-xl bg-[#081329] border border-bup-border hover:border-rose-500/70 transition space-y-2.5 flex flex-col justify-between group">
+            <div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <span class="text-lg">🚫⚡</span>
+                  <span class="font-mono text-xs font-bold text-rose-400">no_charge_window</span>
+                </div>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-rose-500/10 text-rose-300 border border-rose-500/30">Active</span>
+              </div>
+              <p class="text-xs text-slate-300 mt-1.5 font-medium">Battery charging is unavailable during specific hours.</p>
+              <div class="mt-2 text-[10px] font-mono text-slate-400 bg-black/40 p-2 rounded border border-white/5">
+                <span class="text-slate-500">Schema: </span>{"hours":[...]}
+              </div>
+              <div class="mt-1.5 text-[11px] text-slate-400 italic">
+                "Do not charge the battery between 2 PM and 4 PM."
+              </div>
+            </div>
+            <button onclick="injectDirective(2)" class="w-full mt-2 py-1.5 px-2.5 rounded-lg bg-bup-royal/40 hover:bg-bup-royal text-rose-400 hover:text-white border border-rose-500/30 text-[11px] font-semibold transition flex items-center justify-center space-x-1">
+              <span>⚡ Load into Note #0</span>
+            </button>
+          </div>
+
+          <!-- Directive 4: no_discharge_window -->
+          <div class="p-4 rounded-xl bg-[#081329] border border-bup-border hover:border-amber-500/70 transition space-y-2.5 flex flex-col justify-between group">
+            <div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <span class="text-lg">🚫🔋</span>
+                  <span class="font-mono text-xs font-bold text-amber-400">no_discharge_window</span>
+                </div>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/30">Active</span>
+              </div>
+              <p class="text-xs text-slate-300 mt-1.5 font-medium">Battery discharging is unavailable during specific hours.</p>
+              <div class="mt-2 text-[10px] font-mono text-slate-400 bg-black/40 p-2 rounded border border-white/5">
+                <span class="text-slate-500">Schema: </span>{"hours":[...]}
+              </div>
+              <div class="mt-1.5 text-[11px] text-slate-400 italic">
+                "Hold battery discharging between 7 AM and 9 AM."
+              </div>
+            </div>
+            <button onclick="injectDirective(3)" class="w-full mt-2 py-1.5 px-2.5 rounded-lg bg-bup-royal/40 hover:bg-bup-royal text-amber-400 hover:text-white border border-amber-500/30 text-[11px] font-semibold transition flex items-center justify-center space-x-1">
+              <span>⚡ Load into Note #2</span>
+            </button>
+          </div>
+
+          <!-- Directive 5: max_grid_window -->
+          <div class="p-4 rounded-xl bg-[#081329] border border-bup-border hover:border-bup-blue/70 transition space-y-2.5 flex flex-col justify-between group">
+            <div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <span class="text-lg">⚡📉</span>
+                  <span class="font-mono text-xs font-bold text-cyan-400">max_grid_window</span>
+                </div>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">Active</span>
+              </div>
+              <p class="text-xs text-slate-300 mt-1.5 font-medium">Grid import may not exceed a stated amount during specific hours.</p>
+              <div class="mt-2 text-[10px] font-mono text-slate-400 bg-black/40 p-2 rounded border border-white/5">
+                <span class="text-slate-500">Schema: </span>{"hours":[...], "max_grid_kwh": number}
+              </div>
+              <div class="mt-1.5 text-[11px] text-slate-400 italic">
+                "Grid import capped at 20 kWh from 18:00 to 22:00."
+              </div>
+            </div>
+            <button onclick="injectDirective(4)" class="w-full mt-2 py-1.5 px-2.5 rounded-lg bg-bup-royal/40 hover:bg-bup-royal text-cyan-400 hover:text-white border border-bup-blue/30 text-[11px] font-semibold transition flex items-center justify-center space-x-1">
+              <span>⚡ Load into Note #0</span>
+            </button>
+          </div>
+
+          <!-- Directive 6: no_op (Realistic Distractor) -->
+          <div class="p-4 rounded-xl bg-[#081329] border border-bup-border hover:border-slate-500/70 transition space-y-2.5 flex flex-col justify-between group">
+            <div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <span class="text-lg">💬</span>
+                  <span class="font-mono text-xs font-bold text-slate-400">no_op (Distractor)</span>
+                </div>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">Distractor</span>
+              </div>
+              <p class="text-xs text-slate-300 mt-1.5 font-medium">The note does not affect the current 24-hour energy schedule.</p>
+              <div class="mt-2 text-[10px] font-mono text-slate-400 bg-black/40 p-2 rounded border border-white/5">
+                <span class="text-slate-500">Schema: </span>null (applies=false)
+              </div>
+              <div class="mt-1.5 text-[11px] text-slate-400 italic">
+                "The cafeteria menu changes tomorrow." / "Campus looks clean!"
+              </div>
+            </div>
+            <button onclick="injectDirective(5)" class="w-full mt-2 py-1.5 px-2.5 rounded-lg bg-bup-royal/40 hover:bg-bup-royal text-slate-300 hover:text-white border border-slate-700 text-[11px] font-semibold transition flex items-center justify-center space-x-1">
+              <span>⚡ Load into Note #2</span>
+            </button>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- SECTION 3: 3D DIGITAL TWIN & ANIMATED ENERGY FLOW -->
       <section id="threeCampusSection" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         <!-- 3D Campus Digital Twin Canvas (Three.js WebGL) -->
@@ -423,21 +576,20 @@
               </div>
             </div>
 
-            <!-- Hint -->
             <div class="absolute bottom-2 right-3 text-[10px] text-slate-500 font-sans pointer-events-none bg-black/40 px-2 py-0.5 rounded">
               Drag to rotate • Scroll to zoom • Right-click to pan
             </div>
           </div>
         </div>
 
-        <!-- Animated Colorful Energy Flow Diagram (SVG Schematic from Reference Image 1) -->
+        <!-- Animated Colorful Energy Flow Diagram -->
         <div id="energyFlowSection" class="lg:col-span-5 bup-glass rounded-2xl p-5 flex flex-col justify-between space-y-4">
           <div class="flex items-center justify-between">
             <h2 class="font-bold text-sm sm:text-base text-white flex items-center space-x-2">
               <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
               <span>Battery & Campus Energy Flow</span>
             </h2>
-            <span class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Live Invariant Balance</span>
+            <span class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold">Live Balance</span>
           </div>
 
           <p class="text-xs text-slate-400">
@@ -448,7 +600,6 @@
           <div class="relative w-full bg-[#050c1e] rounded-xl p-4 border border-bup-border/70 flex flex-col items-center justify-center space-y-4">
             
             <svg viewBox="0 0 460 220" class="w-full h-auto">
-              <!-- Definitions for gradients and markers -->
               <defs>
                 <linearGradient id="solarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                   <stop offset="0%" stop-color="#ffb606"/>
@@ -468,20 +619,16 @@
                 </linearGradient>
               </defs>
 
-              <!-- Conduits / Connecting Lines with animated pulses -->
-              <!-- Solar to Battery -->
+              <!-- Conduits with animated pulses -->
               <path d="M 90 70 L 200 70" stroke="#f59e0b" stroke-width="3" fill="none" opacity="0.4"/>
               <path d="M 90 70 L 200 70" stroke="#ffb606" stroke-width="3" fill="none" class="pulse-flow"/>
 
-              <!-- Battery to Campus Load -->
               <path d="M 260 70 L 370 70" stroke="#10b981" stroke-width="3" fill="none" opacity="0.4"/>
               <path d="M 260 70 L 370 70" stroke="#34d399" stroke-width="3" fill="none" class="pulse-flow"/>
 
-              <!-- Grid Import to Campus Load -->
               <path d="M 370 160 L 370 105" stroke="#179bd7" stroke-width="3" fill="none" opacity="0.4"/>
               <path d="M 370 160 L 370 105" stroke="#38bdf8" stroke-width="3" fill="none" class="pulse-flow"/>
 
-              <!-- Direct Solar to Campus Load bypass curve -->
               <path d="M 60 105 C 60 170, 200 190, 340 90" stroke="#f59e0b" stroke-dasharray="4 4" stroke-width="1.5" fill="none" opacity="0.3"/>
 
               <!-- Node 1: Solar Panels -->
@@ -531,7 +678,7 @@
 
       </section>
 
-      <!-- SECTION 3: PIPELINE TRACKER & OPERATOR NOTES (From Reference Image 1 & 2) -->
+      <!-- SECTION 4: OPERATOR NOTES PROMPT & PIPELINE TRACKER -->
       <section id="operatorNotesSection" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         <!-- Left: Natural Language Operator Notes & Presets -->
@@ -543,8 +690,8 @@
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
               </div>
               <div>
-                <h3 class="font-bold text-sm sm:text-base text-white">Operator Directives (Natural Language)</h3>
-                <p class="text-[11px] text-slate-400">LLM parses hours, bounds, and solar factors; deterministic guardrails enforce safety.</p>
+                <h3 class="font-bold text-sm sm:text-base text-white">Operator Notes Input</h3>
+                <p class="text-[11px] text-slate-400">Natural language directives (1 to 3 notes per scenario). LLM parses instructions; guardrails validate bounds.</p>
               </div>
             </div>
             <span class="text-[11px] font-mono px-2 py-0.5 rounded-md bg-bup-royal/60 text-bup-blue border border-bup-blue/30">1 to 3 Notes</span>
@@ -555,29 +702,30 @@
             <div class="relative">
               <span class="absolute top-2.5 left-3 text-[11px] font-mono text-slate-500">#0</span>
               <input type="text" id="noteInput0" class="operator-note-input w-full bg-[#081329] border border-bup-border rounded-xl pl-8 pr-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-bup-blue focus:ring-1 focus:ring-bup-blue transition"
-                value="Heavy cloud cover expected between 1 PM and 3 PM; solar PV output will drop by 80%." placeholder="Note 0: (e.g. cloud cover, maintenance, reserve demand)" />
+                value="Solar output will drop to about 20% from 1 PM to 3 PM." placeholder="Note 0: (e.g. solar_reduction, no_charge_window, max_grid_window)" />
             </div>
 
             <div class="relative">
               <span class="absolute top-2.5 left-3 text-[11px] font-mono text-slate-500">#1</span>
               <input type="text" id="noteInput1" class="operator-note-input w-full bg-[#081329] border border-bup-border rounded-xl pl-8 pr-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-bup-blue focus:ring-1 focus:ring-bup-blue transition"
-                value="Keep at least 35 kWh reserve in the battery between 6 PM and 9 PM for the evening auditorium event." placeholder="Note 1: (e.g. reserve threshold)" />
+                value="Keep at least 35 kWh in reserve from 6 PM until 9 PM." placeholder="Note 1: (e.g. minimum_battery_reserve)" />
             </div>
 
             <div class="relative">
               <span class="absolute top-2.5 left-3 text-[11px] font-mono text-slate-500">#2</span>
               <input type="text" id="noteInput2" class="operator-note-input w-full bg-[#081329] border border-bup-border rounded-xl pl-8 pr-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-bup-blue focus:ring-1 focus:ring-bup-blue transition"
-                value="Hold battery discharging between 7 AM and 9 AM." placeholder="Note 2: (optional directive or no_op note)" />
+                value="The cafeteria menu changes tomorrow." placeholder="Note 2: (e.g. no_discharge_window or distractor no_op)" />
             </div>
           </div>
 
           <!-- Presets and Run Controls -->
           <div class="pt-2 flex flex-wrap items-center justify-between gap-3">
             <div class="flex flex-wrap items-center gap-1.5">
-              <span class="text-[11px] text-slate-400 mr-1">Presets:</span>
-              <button onclick="applyPreset(1)" class="text-[11px] px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition">Weather & Reserve</button>
-              <button onclick="applyPreset(2)" class="text-[11px] px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition">Grid Capping</button>
-              <button onclick="applyPreset(3)" class="text-[11px] px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition">Conference Peak</button>
+              <span class="text-[11px] text-slate-400 mr-1">Scenario Presets:</span>
+              <button onclick="applyPreset('solar_reserve')" class="text-[11px] px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition">Solar + Reserve</button>
+              <button onclick="applyPreset('charge_discharge')" class="text-[11px] px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition">Charge/Discharge Inhibit</button>
+              <button onclick="applyPreset('grid_capping')" class="text-[11px] px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition">Max Grid Window</button>
+              <button onclick="applyPreset('distractors')" class="text-[11px] px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition">Distractor Test</button>
             </div>
 
             <button onclick="runOptimization()" id="mainSolveBtn" class="px-5 py-2.5 bg-gradient-to-r from-bup-blue to-emerald-500 hover:from-sky-400 hover:to-teal-400 text-black font-bold text-xs rounded-xl shadow-lg shadow-bup-blue/25 transition transform active:scale-95 flex items-center space-x-2">
@@ -594,7 +742,7 @@
         <!-- Right: Optimization Pipeline Status & Directive Interpretations -->
         <div class="lg:col-span-6 bup-glass rounded-2xl p-5 space-y-4 flex flex-col justify-between">
           
-          <!-- Pipeline Status Breadcrumb (From Reference Image 1 & 2) -->
+          <!-- Pipeline Status Breadcrumb -->
           <div>
             <div class="flex items-center justify-between mb-3">
               <h3 class="font-bold text-sm text-white flex items-center space-x-2">
@@ -653,7 +801,7 @@
 
       </section>
 
-      <!-- SECTION 4: CHARTS (24H DISPATCH CURVES & SOURCE BREAKDOWN DONUT) -->
+      <!-- SECTION 5: CHARTS (24H DISPATCH CURVES & SOURCE BREAKDOWN DONUT) -->
       <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         <!-- Left: 24-Hour Dispatch Curve Chart (Chart.js) -->
@@ -678,7 +826,7 @@
           </div>
         </div>
 
-        <!-- Right: Energy Source Breakdown Donut Chart (From Reference Image 1) -->
+        <!-- Right: Energy Source Breakdown Donut Chart -->
         <div class="lg:col-span-4 bup-glass rounded-2xl p-5 space-y-4 flex flex-col justify-between">
           <div>
             <h3 class="font-bold text-sm sm:text-base text-white">Energy Source Breakdown</h3>
@@ -712,7 +860,7 @@
 
       </section>
 
-      <!-- SECTION 5: 24-HOUR OPTIMIZATION SCHEDULE TABLE & EXPORT (From Reference Image 1 & 2) -->
+      <!-- SECTION 6: 24-HOUR OPTIMIZATION SCHEDULE TABLE & EXPORT -->
       <section id="schedulesSection" class="bup-glass rounded-2xl p-5 space-y-4">
         
         <div class="flex flex-wrap items-center justify-between gap-3">
@@ -778,58 +926,72 @@
 
       </section>
 
-      <!-- SECTION 6: VERIFICATION CHECKLIST & TELEMETRY (From Reference Image 2) -->
+      <!-- SECTION 7: DIRECTIVE VALIDATION & TELEMETRY -->
       <section id="validationSection" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        <!-- Directive Validation Checklist -->
+        <!-- Directive Validation Checklist (Exhaustively Auditing All 6 Types) -->
         <div class="lg:col-span-6 bup-glass rounded-2xl p-5 space-y-3">
           <div class="flex items-center justify-between">
             <h3 class="font-bold text-sm sm:text-base text-white flex items-center space-x-2">
               <svg class="w-4 h-4 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-              <span>Directive Validation & Audit Checklist</span>
+              <span>Audit of All 6 Canonical Directive Types</span>
             </h3>
-            <span class="text-[11px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold">Zero-Trust Guardrails</span>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold font-mono">100% Recognized</span>
           </div>
 
-          <div class="space-y-2 text-xs">
-            <div class="flex items-center justify-between p-2.5 rounded-xl bg-[#081329] border border-bup-border/60">
-              <div class="flex items-center space-x-2.5">
-                <span class="h-4 w-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-[10px]">✓</span>
-                <span class="text-slate-300">Supported Canonical Directive Types (6 types)</span>
+          <div class="space-y-1.5 text-xs">
+            <div class="flex items-center justify-between p-2 rounded-xl bg-[#081329] border border-bup-border/60">
+              <div class="flex items-center space-x-2">
+                <span class="text-emerald-400 font-bold">✓</span>
+                <span class="text-slate-200 font-mono">1. solar_reduction</span>
+                <span class="text-[10px] text-slate-400">({"hours":[...], "factor": float})</span>
               </div>
-              <span class="text-emerald-400 font-bold font-mono">PASS</span>
+              <span class="text-emerald-400 font-bold font-mono text-[11px]">SUPPORTED</span>
             </div>
 
-            <div class="flex items-center justify-between p-2.5 rounded-xl bg-[#081329] border border-bup-border/60">
-              <div class="flex items-center space-x-2.5">
-                <span class="h-4 w-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-[10px]">✓</span>
-                <span class="text-slate-300">Strict 24-Hour Sequential Continuity (0..23)</span>
+            <div class="flex items-center justify-between p-2 rounded-xl bg-[#081329] border border-bup-border/60">
+              <div class="flex items-center space-x-2">
+                <span class="text-emerald-400 font-bold">✓</span>
+                <span class="text-slate-200 font-mono">2. minimum_battery_reserve</span>
+                <span class="text-[10px] text-slate-400">({"hours":[...], "minimum_energy_kwh": float})</span>
               </div>
-              <span class="text-emerald-400 font-bold font-mono">PASS</span>
+              <span class="text-emerald-400 font-bold font-mono text-[11px]">SUPPORTED</span>
             </div>
 
-            <div class="flex items-center justify-between p-2.5 rounded-xl bg-[#081329] border border-bup-border/60">
-              <div class="flex items-center space-x-2.5">
-                <span class="h-4 w-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-[10px]">✓</span>
-                <span class="text-slate-300">Battery Neutrality Invariant (|E₂₃ - E₀| ≤ 0.01 kWh)</span>
+            <div class="flex items-center justify-between p-2 rounded-xl bg-[#081329] border border-bup-border/60">
+              <div class="flex items-center space-x-2">
+                <span class="text-emerald-400 font-bold">✓</span>
+                <span class="text-slate-200 font-mono">3. no_charge_window</span>
+                <span class="text-[10px] text-slate-400">({"hours":[...]})</span>
               </div>
-              <span class="text-emerald-400 font-bold font-mono">PASS</span>
+              <span class="text-emerald-400 font-bold font-mono text-[11px]">SUPPORTED</span>
             </div>
 
-            <div class="flex items-center justify-between p-2.5 rounded-xl bg-[#081329] border border-bup-border/60">
-              <div class="flex items-center space-x-2.5">
-                <span class="h-4 w-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-[10px]">✓</span>
-                <span class="text-slate-300">Battery Throughput Regularization (No Simultaneous C/D)</span>
+            <div class="flex items-center justify-between p-2 rounded-xl bg-[#081329] border border-bup-border/60">
+              <div class="flex items-center space-x-2">
+                <span class="text-emerald-400 font-bold">✓</span>
+                <span class="text-slate-200 font-mono">4. no_discharge_window</span>
+                <span class="text-[10px] text-slate-400">({"hours":[...]})</span>
               </div>
-              <span class="text-emerald-400 font-bold font-mono">PASS</span>
+              <span class="text-emerald-400 font-bold font-mono text-[11px]">SUPPORTED</span>
             </div>
 
-            <div class="flex items-center justify-between p-2.5 rounded-xl bg-[#081329] border border-bup-border/60">
-              <div class="flex items-center space-x-2.5">
-                <span class="h-4 w-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-[10px]">✓</span>
-                <span class="text-slate-300">Independent Replay Invariant Verification</span>
+            <div class="flex items-center justify-between p-2 rounded-xl bg-[#081329] border border-bup-border/60">
+              <div class="flex items-center space-x-2">
+                <span class="text-emerald-400 font-bold">✓</span>
+                <span class="text-slate-200 font-mono">5. max_grid_window</span>
+                <span class="text-[10px] text-slate-400">({"hours":[...], "max_grid_kwh": float})</span>
               </div>
-              <span class="text-emerald-400 font-bold font-mono">PASS</span>
+              <span class="text-emerald-400 font-bold font-mono text-[11px]">SUPPORTED</span>
+            </div>
+
+            <div class="flex items-center justify-between p-2 rounded-xl bg-[#081329] border border-bup-border/60">
+              <div class="flex items-center space-x-2">
+                <span class="text-emerald-400 font-bold">✓</span>
+                <span class="text-slate-200 font-mono">6. no_op</span>
+                <span class="text-[10px] text-slate-400">(null / distractor retention)</span>
+              </div>
+              <span class="text-emerald-400 font-bold font-mono text-[11px]">SUPPORTED</span>
             </div>
           </div>
         </div>
@@ -870,7 +1032,7 @@
     </main>
   </div>
 
-  <!-- RAW JSON INSPECTION MODAL (From Reference Image 2) -->
+  <!-- RAW JSON INSPECTION MODAL -->
   <div id="jsonModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bup-glass border border-bup-blue/50 rounded-2xl max-w-4xl w-full max-h-[85vh] flex flex-col shadow-2xl">
       <div class="p-4 border-b border-bup-border flex items-center justify-between">
@@ -905,7 +1067,7 @@
         <span>BUP CSE Fest 2026 Hackathon</span>
       </div>
       <div class="text-[11px] text-slate-500 font-mono">
-        PuLP CBC Solver • Agnes-2.5-Flash LLM • Deterministic Zero-Trust Guardrails
+        All 6 Directive Types Supported: solar_reduction • minimum_battery_reserve • no_charge_window • no_discharge_window • max_grid_window • no_op
       </div>
     </div>
   </footer>
@@ -919,6 +1081,59 @@
     let breakdownChartInstance = null;
     let currentResponseData = null;
     let currentHoursData = [];
+
+    // Canonical examples for all 6 directive types
+    const CANONICAL_DIRECTIVES = [
+      {
+        type: "solar_reduction",
+        slot: 0,
+        text: "Solar output will drop to about 20% from 1 PM to 3 PM."
+      },
+      {
+        type: "minimum_battery_reserve",
+        slot: 1,
+        text: "Keep at least 35 kWh in reserve from 6 PM until 9 PM."
+      },
+      {
+        type: "no_charge_window",
+        slot: 0,
+        text: "Do not charge the battery between 2 PM and 4 PM."
+      },
+      {
+        type: "no_discharge_window",
+        slot: 2,
+        text: "Hold battery discharging between 7 AM and 9 AM."
+      },
+      {
+        type: "max_grid_window",
+        slot: 0,
+        text: "Grid import capped at 20 kWh from 18:00 to 22:00."
+      },
+      {
+        type: "no_op",
+        slot: 2,
+        text: "The cafeteria menu changes tomorrow."
+      }
+    ];
+
+    function injectDirective(index) {
+      const item = CANONICAL_DIRECTIVES[index];
+      if (!item) return;
+      const targetInput = document.getElementById('noteInput' + item.slot);
+      if (targetInput) {
+        targetInput.value = item.text;
+        targetInput.classList.add('ring-2', 'ring-bup-blue');
+        setTimeout(() => targetInput.classList.remove('ring-2', 'ring-bup-blue'), 1000);
+      }
+      runOptimization();
+    }
+
+    function applyAllDirectivesBundle() {
+      document.getElementById('noteInput0').value = "Solar output will drop to about 20% from 1 PM to 3 PM.";
+      document.getElementById('noteInput1').value = "Keep at least 35 kWh in reserve from 6 PM until 9 PM.";
+      document.getElementById('noteInput2').value = "Do not charge the battery between 11 AM and 1 PM.";
+      runOptimization();
+    }
 
     // -------------------------------------------------------------
     // Live Digital Clock
@@ -950,23 +1165,19 @@
       scene.background = new THREE.Color(0x040814);
       scene.fog = new THREE.FogExp2(0x040814, 0.015);
 
-      // Camera
       camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
       camera.position.set(40, 32, 45);
 
-      // Renderer
       renderer = new THREE.WebGLRenderer({ canvas: container, antialias: true, alpha: true });
       renderer.setSize(width, height);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.shadowMap.enabled = true;
 
-      // Controls
       controls = new THREE.OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
       controls.dampingFactor = 0.05;
-      controls.maxPolarAngle = Math.PI / 2.1; // Don't go below ground
+      controls.maxPolarAngle = Math.PI / 2.1;
 
-      // Lighting
       const ambientLight = new THREE.AmbientLight(0x253b80, 1.2);
       scene.add(ambientLight);
 
@@ -983,7 +1194,6 @@
       greenPoint.position.set(15, 5, -15);
       scene.add(greenPoint);
 
-      // Campus Ground Grid
       const gridHelper = new THREE.GridHelper(80, 40, 0x179bd7, 0x0f234f);
       gridHelper.position.y = -0.1;
       scene.add(gridHelper);
@@ -1007,7 +1217,6 @@
     }
 
     function buildCampusGeometry() {
-      // 1. Central BUP Academic Complex
       const buildingMat = new THREE.MeshStandardMaterial({
         color: 0x11224d,
         roughness: 0.3,
@@ -1029,19 +1238,18 @@
         campusGroup.add(strip);
       }
 
-      // Left wing (Auditorium & Library)
+      // Wings
       const leftWingGeo = new THREE.BoxGeometry(10, 8, 8);
       const leftWing = new THREE.Mesh(leftWingGeo, buildingMat);
       leftWing.position.set(-14, 4, 2);
       campusGroup.add(leftWing);
 
-      // Right wing (Faculty of Science & Technology)
       const rightWingGeo = new THREE.BoxGeometry(10, 10, 8);
       const rightWing = new THREE.Mesh(rightWingGeo, buildingMat);
       rightWing.position.set(14, 5, -2);
       campusGroup.add(rightWing);
 
-      // 2. Rooftop Solar Photovoltaic Panels
+      // Rooftop Solar Photovoltaic Panels
       const solarMat = new THREE.MeshStandardMaterial({
         color: 0x0284c7,
         emissive: 0x0369a1,
@@ -1058,7 +1266,6 @@
           panel.rotation.x = -0.2;
           solarGroup.add(panel);
 
-          // Golden edge trim
           const wireGeo = new THREE.EdgesGeometry(panelGeo);
           const wire = new THREE.LineSegments(wireGeo, solarFrameMat);
           wire.position.copy(panel.position);
@@ -1067,7 +1274,7 @@
         }
       }
 
-      // 3. Battery Energy Storage System (BESS Container)
+      // Battery Energy Storage System (BESS Container)
       const bessMat = new THREE.MeshStandardMaterial({
         color: 0x064e3b,
         emissive: 0x059669,
@@ -1079,7 +1286,7 @@
       bessContainer.position.set(18, 2.25, 14);
       batteryGroup.add(bessContainer);
 
-      // Glowing SoC indicator bars on battery side
+      // LED indicators
       for (let i = 0; i < 4; i++) {
         const ledGeo = new THREE.BoxGeometry(0.3, 0.5, 3);
         const ledMat = new THREE.MeshBasicMaterial({ color: 0x10b981 });
@@ -1088,14 +1295,13 @@
         batteryGroup.add(led);
       }
 
-      // 4. Utility Grid Substation & Pylon
+      // Grid Substation & Pylon
       const pylonMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, wireframe: true });
       const pylonGeo = new THREE.CylinderGeometry(0.8, 2.5, 18, 6);
       const pylon = new THREE.Mesh(pylonGeo, pylonMat);
       pylon.position.set(-24, 9, -16);
       gridGroup.add(pylon);
 
-      // Pylon crossbeams
       const armGeo = new THREE.BoxGeometry(8, 0.5, 0.5);
       const arm = new THREE.Mesh(armGeo, pylonMat);
       arm.position.set(-24, 15, -16);
@@ -1103,7 +1309,6 @@
     }
 
     function buildParticleEnergyStreams() {
-      // Create glowing energy particles traveling along bezier paths
       const particleCount = 60;
       const geo = new THREE.SphereGeometry(0.25, 8, 8);
       const mat = new THREE.MeshBasicMaterial({ color: 0xffb606 });
@@ -1115,7 +1320,7 @@
           mesh: mesh,
           t: Math.random(),
           speed: 0.006 + Math.random() * 0.005,
-          type: (i % 3) // 0: Solar->Battery, 1: Battery->Campus, 2: Grid->Campus
+          type: (i % 3)
         });
       }
     }
@@ -1123,36 +1328,30 @@
     function animateThree() {
       requestAnimationFrame(animateThree);
 
-      // Gentle campus rotation if not dragging
       campusGroup.rotation.y += 0.0008;
       solarGroup.rotation.y += 0.0008;
       batteryGroup.rotation.y += 0.0008;
       gridGroup.rotation.y += 0.0008;
 
-      // Update particle positions
       particles.forEach(p => {
         p.t += p.speed;
         if (p.t > 1) p.t = 0;
 
         let start, end;
         if (p.type === 0) {
-          // Solar (rooftop) to Battery
           start = new THREE.Vector3(0, 14, 0);
           end = new THREE.Vector3(18, 2.25, 14);
-          p.mesh.material.color.setHex(0xffb606); // Gold
+          p.mesh.material.color.setHex(0xffb606);
         } else if (p.type === 1) {
-          // Battery to Main Campus Load
           start = new THREE.Vector3(18, 2.25, 14);
           end = new THREE.Vector3(0, 7, 0);
-          p.mesh.material.color.setHex(0x10b981); // Green
+          p.mesh.material.color.setHex(0x10b981);
         } else {
-          // Grid Substation to Campus
           start = new THREE.Vector3(-24, 12, -16);
           end = new THREE.Vector3(0, 7, 0);
-          p.mesh.material.color.setHex(0x179bd7); // Blue
+          p.mesh.material.color.setHex(0x179bd7);
         }
 
-        // Interpolate position with gentle arc
         p.mesh.position.lerpVectors(start, end, p.t);
         p.mesh.position.y += Math.sin(p.t * Math.PI) * 4;
       });
@@ -1188,23 +1387,27 @@
     // -------------------------------------------------------------
     // PRESETS LOGIC
     // -------------------------------------------------------------
-    function applyPreset(num) {
+    function applyPreset(presetType) {
       const in0 = document.getElementById('noteInput0');
       const in1 = document.getElementById('noteInput1');
       const in2 = document.getElementById('noteInput2');
 
-      if (num === 1) {
-        in0.value = "Heavy cloud cover expected between 1 PM and 3 PM; solar PV output will drop by 80%.";
-        in1.value = "Keep at least 35 kWh reserve in the battery between 6 PM and 9 PM for the evening auditorium event.";
-        in2.value = "Hold battery discharging between 7 AM and 9 AM.";
-      } else if (num === 2) {
-        in0.value = "Grid import capped at 20 kWh from 18:00 to 22:00 due to contract demand limits.";
-        in1.value = "Do not charge the battery between 12:00 and 15:00.";
-        in2.value = "Cafeteria closed for cleaning at 5 PM.";
-      } else {
-        in0.value = "Keep battery above 40 kWh after 6 PM.";
-        in1.value = "Solar maintenance at east rooftop from 9 AM to 11 AM; solar capacity reduced to 10%.";
-        in2.value = "Campus looks very clean today!";
+      if (presetType === 'solar_reserve') {
+        in0.value = "Solar output will drop to about 20% from 1 PM to 3 PM.";
+        in1.value = "Keep at least 35 kWh in reserve from 6 PM until 9 PM.";
+        in2.value = "The cafeteria menu changes tomorrow.";
+      } else if (presetType === 'charge_discharge') {
+        in0.value = "Do not charge the battery between 2 PM and 4 PM.";
+        in1.value = "Hold battery discharging between 7 AM and 9 AM.";
+        in2.value = "Campus security shift handover at 14:00.";
+      } else if (presetType === 'grid_capping') {
+        in0.value = "Grid import capped at 20 kWh from 18:00 to 22:00.";
+        in1.value = "Keep battery above 30 kWh between 18:00 and 21:00.";
+        in2.value = "Cloudy afternoon: cut solar by 50% between 12:00 and 15:00.";
+      } else if (presetType === 'distractors') {
+        in0.value = "The cafeteria menu changes tomorrow.";
+        in1.value = "Campus grounds are exceptionally clean today.";
+        in2.value = "Meeting scheduled in faculty lounge at 4 PM.";
       }
 
       runOptimization();
@@ -1232,7 +1435,8 @@
         return;
       }
 
-      // Set UI loading state
+      document.getElementById('activeNotesBadge').textContent = inputs.length;
+
       if (topBtn) topBtn.disabled = true;
       if (mainBtn) mainBtn.disabled = true;
       if (topSpinner) topSpinner.classList.remove('hidden');
@@ -1240,7 +1444,6 @@
       if (topBtnText) topBtnText.textContent = "Solving LP...";
       if (mainBtnText) mainBtnText.textContent = "Solving LP...";
 
-      // Generate 24-hour baseline scenario matching BUP Campus profile
       currentHoursData = [];
       for (let h = 0; h < 24; h++) {
         let demand = (h >= 9 && h <= 19) ? 35.0 : 18.0;
@@ -1289,7 +1492,6 @@
         currentResponseData = data;
         renderResults(data, currentHoursData);
 
-        // Trigger confetti celebration on optimal solve
         try {
           confetti({
             particleCount: 50,
@@ -1316,7 +1518,6 @@
     // RENDER RESULTS IN DASHBOARD
     // -------------------------------------------------------------
     function renderResults(data, hoursData) {
-      // 1. KPI Cards
       const totalDemand = hoursData.reduce((acc, h) => acc + h.demand_kwh, 0);
       const totalSolar = hoursData.reduce((acc, h) => acc + h.solar_kwh, 0);
 
@@ -1326,28 +1527,23 @@
       document.getElementById('kpiTotalCost').textContent = '৳ ' + data.total_cost_bdt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
       document.getElementById('kpiPeakGrid').textContent = 'Peak: ' + data.peak_grid_kwh.toFixed(1) + ' kWh';
 
-      // Current Battery SoC
       const lastSoC = data.hourly_plan[data.hourly_plan.length - 1].battery_energy_after_kwh;
       const socPct = Math.round((lastSoC / 100.0) * 100);
       document.getElementById('kpiBatterySoc').textContent = socPct + '%';
       document.getElementById('sidebarSocPct').textContent = socPct + '% SoC';
       document.getElementById('sidebarSocBar').style.width = socPct + '%';
 
-      // HUD overlay values
       document.getElementById('hudSolar').textContent = (totalSolar / 24).toFixed(1) + ' kW avg';
       document.getElementById('hudSoc').textContent = lastSoC.toFixed(1) + ' kWh (' + socPct + '%)';
       document.getElementById('hudGrid').textContent = data.peak_grid_kwh.toFixed(1) + ' kW peak';
 
-      // Flow diagram labels
-      document.getElementById('flowSolarVal').textContent = (totalSolar).toFixed(0) + ' kWh';
+      document.getElementById('flowSolarVal').textContent = totalSolar.toFixed(0) + ' kWh';
       document.getElementById('flowBatteryVal').textContent = lastSoC.toFixed(1) + ' kWh (' + socPct + '%)';
       document.getElementById('flowCampusVal').textContent = totalDemand.toFixed(0) + ' kWh';
       document.getElementById('flowGridVal').textContent = 'Grid ' + data.total_grid_kwh.toFixed(0) + ' kWh';
 
-      // 2. Executive Plan Summary
       document.getElementById('planSummaryText').textContent = data.plan_summary;
 
-      // 3. Interpreted Operator Notes
       const directivesContainer = document.getElementById('directivesContainer');
       directivesContainer.innerHTML = '';
       const activeDirectives = data.directive_interpretation.filter(d => d.applies && d.directive_type !== 'no_op');
@@ -1357,7 +1553,7 @@
         const item = document.createElement('div');
         const isNoOp = d.directive_type === 'no_op';
         const badgeClass = isNoOp ? 'bg-slate-800 text-slate-400 border-slate-700' : 'bg-bup-royal text-bup-blue border-bup-blue/40';
-        const pillText = isNoOp ? 'NO_OP' : 'ACTIVE DIRECTIVE';
+        const pillText = isNoOp ? 'NO_OP' : 'APPLIES';
         const pillColor = isNoOp ? 'bg-slate-800 text-slate-400' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
 
         let adjustmentHtml = '';
@@ -1384,7 +1580,6 @@
         directivesContainer.appendChild(item);
       });
 
-      // 4. 24-Hour Schedule Table
       const tbody = document.getElementById('scheduleTableBody');
       tbody.innerHTML = '';
 
@@ -1416,7 +1611,6 @@
         tbody.appendChild(tr);
       });
 
-      // 5. Update Charts
       renderCharts(data.hourly_plan, hoursData, data.total_grid_kwh);
     }
 
@@ -1430,7 +1624,6 @@
       const gridData = plan.map(p => p.grid_kwh);
       const socData = plan.map(p => p.battery_energy_after_kwh);
 
-      // Line Dispatch Chart
       const dispatchCtx = document.getElementById('dispatchChart').getContext('2d');
       if (dispatchChartInstance) dispatchChartInstance.destroy();
 
@@ -1509,7 +1702,6 @@
         }
       });
 
-      // Energy Source Breakdown Donut Chart
       const totalSolarUsed = plan.reduce((a, b) => a + b.solar_used_kwh, 0);
       const totalDischarge = plan.filter(p => p.battery_action === 'discharge').reduce((a, b) => a + b.battery_kwh, 0);
       const totalEnergy = totalSolarUsed + totalDischarge + totalGridKwh;
