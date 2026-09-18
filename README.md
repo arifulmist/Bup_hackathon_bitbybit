@@ -332,21 +332,24 @@ docker pull <YOUR_REGISTRY_IMAGE_TAG_OR_DIGEST>
 
 ---
 
-## 12. Deployment Instructions (Cloud Live Endpoint)
+## 12. Deployment & Live Public Service Endpoint
 
-The service is fully stateless and deployable to any public cloud platform (Render, Railway, Fly.io, Google Cloud Run, AWS):
+The production service is fully deployed and continuously live on Render in the Singapore region:
 
-1. **Deploying on Render / Railway**:
-   - Connect the GitHub repository.
-   - Select **Docker** as the runtime environment (or Python with start command `uvicorn app.main:app --host 0.0.0.0 --port $PORT`).
-   - Add environment variables in the dashboard:
-     - `LLM_API_KEY`: *(Your LLM provider API key)*
-     - `LLM_BASE_URL`: `https://router.bynara.id/v1` (if using custom router)
-     - `LLM_MODEL`: `agnes-2.5-flash`
-   - Deploy service and verify public URL:
-     ```bash
-     curl https://<your-app-name>.onrender.com/health
-     ```
+- **Live Service URL:** [https://gridwise-optimizer-jdrh.onrender.com](https://gridwise-optimizer-jdrh.onrender.com)
+- **Health Check Endpoint:** [https://gridwise-optimizer-jdrh.onrender.com/health](https://gridwise-optimizer-jdrh.onrender.com/health)
+- **Interactive UI Dashboard:** [https://gridwise-optimizer-jdrh.onrender.com/](https://gridwise-optimizer-jdrh.onrender.com/)
+- **API Optimization Endpoint:** `POST https://gridwise-optimizer-jdrh.onrender.com/optimize-energy`
+
+Verify immediately via terminal:
+```bash
+curl https://gridwise-optimizer-jdrh.onrender.com/health
+```
+Expected response:
+```json
+{"status":"ok"}
+```
+
 
 ---
 
