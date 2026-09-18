@@ -19,3 +19,13 @@ services:
       timeout: 5s
       retries: 3
       start_period: 5s
+
+  frontend:
+    image: nginx:alpine
+    container_name: gridwise-frontend
+    ports:
+      - "3000:80"
+    volumes:
+      - ./Frontend:/usr/share/nginx/html:ro
+    depends_on:
+      - gridwise-api
